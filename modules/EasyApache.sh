@@ -78,7 +78,7 @@ easyapache_site_create(){
         if [ "$4" != "/n" ]
         then
             echo " " >> "$apache_av_dir/$1"
-            echo "        $4 $2" >> "$apache_av_dir/$1"
+            echo "        Alias $4 $2" >> "$apache_av_dir/$1"
         fi
         echo "</VirtualHost>" >> "$apache_av_dir/$1"
         if ! easysite_dir_check "$easyapache_site_DocumentRoot"
