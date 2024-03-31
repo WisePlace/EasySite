@@ -72,14 +72,13 @@ easyapache_site_create(){
         echo "<VirtualHost *:80>" >> "$apache_av_dir/$1"
         echo "        DocumentRoot $2" >> "$apache_av_dir/$1"
         echo "        ServerName $3" >> "$apache_av_dir/$1"
+        if [ "$4" != "/n" ]
+        then
+            echo "        Alias $4 $2" >> "$apache_av_dir/$1"
+        fi
         echo " " >> "$apache_av_dir/$1"
         echo '        ErrorLog ${APACHE_LOG_DIR}/html_error.log' >> "$apache_av_dir/$1"
         echo '        CustomLog ${APACHE_LOG_DIR}/html_access.log combined' >> "$apache_av_dir/$1"
-        if [ "$4" != "/n" ]
-        then
-            echo " " >> "$apache_av_dir/$1"
-            echo "        Alias $4 $2" >> "$apache_av_dir/$1"
-        fi
         echo "</VirtualHost>" >> "$apache_av_dir/$1"
         if ! easysite_dir_check "$easyapache_site_DocumentRoot"
         then
