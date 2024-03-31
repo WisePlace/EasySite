@@ -1,0 +1,32 @@
+apache_dir="/etc/apache2"
+apache_en_dir="$apache_dir/sites-enabled"
+apache_en_list=()
+apache_av_dir="$apache_dir/sites-available"
+apache_av_list=()
+
+apache_get_list(){
+    apache_en_list=($(ls "$apache_en_dir"))
+    apache_av_list=($(ls "$apache_av_dir"))
+}
+
+apache_get_site(){
+    if [ -f "$apache_av_dir/$1" ]
+    then
+        site="$apache_av_dir/$1"
+        site_DocumentRoot=$(grep 'DocumentRoot' "$site" | awk '{print $2}')
+        site_ServerName=$(grep 'ServerName' "$site" | awk '{print $2}')
+        site_ErrorLog=$(grep 'ErrorLog' "$site" | awk '{print $2}')
+        site_CustomLog=$(grep 'CustomLog' "$site" | awk '{print $2}')
+        temp=$(grep -i 'SSLEngine' "$site")
+        site_SSLEngine=$(echo "$temp" | cut -d' ' -f2)
+        site_SSLCertificateFile=$(grep -i 'SSLCertificateFile' "$site" | awk '{print $2}')
+        site_SSLCertificateKeyFile=$(grep -i 'SSLCertificateKeyFile' "$site" | awk '{print $2}')
+        site_Alias=$(grep -iE 'Alias\s+(/\S+)' "$site" | awk '{print $2}')
+        site_AliasDir=$(grep -iE 'Alias\s+(/\S+)\s+(\S+)' "$site" | awk '{print $3}')
+    else
+        echo -e "${RED}Failed to get site informations: ${LRED}This site doesn't exist.${RESET}"
+    fi
+}
+
+A FAIRE : 
+EasySite mysql_secure_installation
