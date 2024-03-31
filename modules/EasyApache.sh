@@ -388,25 +388,25 @@ easyapache_menu_modify(){ #$easyapache_site_file
                 fi
                 clear
                 echo " "
-                easyapache_site_modify_file $easyapache_site_new_file
+                easyapache_site_modify_file "$easyapache_site_new_file"
                 ;;
             2)
                 read -p "$(echo -e "${LCYAN}Enter new Files Directory:${RESET} ")" easyapache_site_new_DocumentRoot
                 clear
                 echo " "
-                easyapache_site_modify_DocumentRoot $easyapache_site_new_DocumentRoot
+                easyapache_site_modify_DocumentRoot "$easyapache_site_new_DocumentRoot"
                 ;;
             3)
                 read -p "$(echo -e "${LCYAN}Enter new URL:${RESET} ")" easyapache_site_new_ServerName
                 clear
                 echo " "
-                easyapache_site_modify_ServerName $easyapache_site_new_ServerName
+                easyapache_site_modify_ServerName "$easyapache_site_new_ServerName"
                 ;;
             4)
                 read -p "$(echo -e "${LCYAN}Enter new Alias (${LYELLOW}/ included${LCYAN}):${RESET} ")" easyapache_site_new_Alias
                 clear
                 echo " "
-                easyapache_site_modify_Alias $easyapache_site_new_Alias
+                easyapache_site_modify_Alias "$easyapache_site_new_Alias"
                 ;;
             5)
                 if [ "$bin" == "true" ]
@@ -414,11 +414,11 @@ easyapache_menu_modify(){ #$easyapache_site_file
                     read -p "$(echo -e "${LCYAN}Enter new SSL Certificate Path:${RESET} ")" easyapache_site_new_SSLCertificateFile
                     clear
                     echo " "
-                    easyapache_site_modify_SSLCertificateFile $easyapache_site_new_SSLCertificateFile
+                    easyapache_site_modify_SSLCertificateFile "$easyapache_site_new_SSLCertificateFile"
                 else
                     clear
                     echo " "
-                    easyapache_site_enable_SSL $easyapache_site_file
+                    easyapache_site_enable_SSL "$easyapache_site_file"
                 fi
                 ;;
             6)
@@ -427,7 +427,7 @@ easyapache_menu_modify(){ #$easyapache_site_file
                     read -p "$(echo -e "${LCYAN}Enter new SSL Key Path:${RESET} ")" easyapache_site_new_SSLCertificateKeyFile
                     clear
                     echo " "
-                    easyapache_site_modify_SSLCertificateKeyFile $easyapache_site_new_SSLCertificateKeyFile
+                    easyapache_site_modify_SSLCertificateKeyFile "$easyapache_site_new_SSLCertificateKeyFile"
                 else
                     clear
                     echo " "
