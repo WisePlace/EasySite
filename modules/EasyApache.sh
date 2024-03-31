@@ -163,7 +163,7 @@ easyapache_site_modify_file(){
 }
 
 easyapache_site_modify_DocumentRoot(){
-    if output=$(sed -i "s/^\s*DocumentRoot\s\+.*/DocumentRoot $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\s*DocumentRoot\s\+.*#DocumentRoot $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
     then
         easyapache_site_DocumentRoot="$1"
         echo -e "${BOLD}> ${LGREEN}The Files Directory has been modified successfully.${RESET}"
@@ -174,7 +174,7 @@ easyapache_site_modify_DocumentRoot(){
 }
 
 easyapache_site_modify_ServerName(){
-    if output=$(sed -i "s/^\s*ServerName\s\+.*/ServerName $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\s*ServerName\s\+.*#ServerName $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
     then
         easyapache_site_ServerName="$1"
         echo -e "${BOLD}> ${LGREEN}The URL has been modified successfully.${RESET}"
@@ -185,7 +185,7 @@ easyapache_site_modify_ServerName(){
 }
 
 easyapache_site_modify_Alias(){
-    if output=$(sed -i "s/^\s*Alias\s\+.*/Alias $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\s*Alias\s\+.*#Alias $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
     then
         easyapache_site_Alias="$1"
         echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
@@ -196,7 +196,7 @@ easyapache_site_modify_Alias(){
 }
 
 easyapache_site_modify_SSLCertificateFile(){
-    if output=$(sed -i "s/^\s*SSLCertificateFile\s\+.*/SSLCertificateFile $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\s*SSLCertificateFile\s\+.*#SSLCertificateFile $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
     then
         easyapache_site_SSLCertificateFile="$1"
         echo -e "${BOLD}> ${LGREEN}The SSL Certificate Path has been modified successfully.${RESET}"
@@ -207,7 +207,7 @@ easyapache_site_modify_SSLCertificateFile(){
 }
 
 easyapache_site_modify_SSLCertificateKeyFile(){
-    if output=$(sed -i "s/^\s*SSLCertificateKeyFile\s\+.*/SSLCertificateKeyFile $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\s*SSLCertificateKeyFile\s\+.*#SSLCertificateKeyFile $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
     then
         easyapache_site_SSLCertificateKeyFile="$1"
         echo -e "${BOLD}> ${LGREEN}The SSL Key Path has been modified successfully.${RESET}"
