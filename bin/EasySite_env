@@ -36,7 +36,7 @@ RESET="\e[0m"
 BOLD="\e[1m"
 
 easysite_file_create(){
-    if [ -f "$1" ] && [ -d "$1" ]
+    if [ -f "$1" ] || [ -d "$1" ]
     then
         echo -e "${BOLD}> ${LRED}A file or directory named ${LYELLOW}$1 ${LRED}already exists.${RESET}"
     else
@@ -64,7 +64,7 @@ easysite_file_delete(){
 }
 
 easysite_dir_create(){
-    if [ -d "$1" ] && [ -f "$1" ]
+    if [ -d "$1" ] || [ -f "$1" ]
     then
         echo -e "${BOLD}> ${LRED}A file or directory named ${LYELLOW}$1 ${LRED}already exists.${RESET}"
     else
