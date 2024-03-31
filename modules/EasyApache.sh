@@ -163,7 +163,7 @@ easyapache_site_modify_file(){
 }
 
 easyapache_site_modify_DocumentRoot(){
-    if output=$(sed -i "s#^\s*DocumentRoot\s\+.*#DocumentRoot $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\(\s*\)DocumentRoot\s\+.*#\1DocumentRoot $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
     then
         easyapache_site_DocumentRoot="$1"
         echo -e "${BOLD}> ${LGREEN}The Files Directory has been modified successfully.${RESET}"
@@ -174,7 +174,7 @@ easyapache_site_modify_DocumentRoot(){
 }
 
 easyapache_site_modify_ServerName(){
-    if output=$(sed -i "s#^\s*ServerName\s\+.*#ServerName $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\(\s*\)ServerName\s\+.*#\1ServerName $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
     then
         easyapache_site_ServerName="$1"
         echo -e "${BOLD}> ${LGREEN}The URL has been modified successfully.${RESET}"
@@ -185,18 +185,30 @@ easyapache_site_modify_ServerName(){
 }
 
 easyapache_site_modify_Alias(){
-    if output=$(sed -i "s#^\s*Alias\s\+.*#Alias $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if [ "$easyapache_site_Alias" == "" ] || [ "$easyapache_site_Alias" == "/" ] || [ "$easyapache_site_Alias" == " " ]
     then
-        easyapache_site_Alias="$1"
-        echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
-        easysite_service_reload "apache2"
+        if output=$(sed -i -e "/^\(\s*\)ServerName\s\+.*$/a\\\1Alias /alias $1" "$apache_av_dir/$easyapache_site_file" 2>&1)
+        then
+            easyapache_site_Alias="$1"
+            echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
+            easysite_service_reload "apache2"
+        else
+            echo -e "${RED}Failed to modify Alias: ${LRED}$output${RESET}"
+        fi
     else
-        echo -e "${RED}Failed to modify Alias: ${LRED}$output${RESET}"
+        if output=$(sed -i "s#^\(\s*\)Alias\s\+.*#\1Alias $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+        then
+            easyapache_site_Alias="$1"
+            echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
+            easysite_service_reload "apache2"
+        else
+            echo -e "${RED}Failed to modify Alias: ${LRED}$output${RESET}"
+        fi
     fi
 }
 
 easyapache_site_modify_SSLCertificateFile(){
-    if output=$(sed -i "s#^\s*SSLCertificateFile\s\+.*#SSLCertificateFile $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\(\s*\)SSLCertificateFile\s\+.*#\1SSLCertificateFile $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
     then
         easyapache_site_SSLCertificateFile="$1"
         echo -e "${BOLD}> ${LGREEN}The SSL Certificate Path has been modified successfully.${RESET}"
@@ -207,7 +219,7 @@ easyapache_site_modify_SSLCertificateFile(){
 }
 
 easyapache_site_modify_SSLCertificateKeyFile(){
-    if output=$(sed -i "s#^\s*SSLCertificateKeyFile\s\+.*#SSLCertificateKeyFile $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\(\s*\)SSLCertificateKeyFile\s\+.*#\1SSLCertificateKeyFile $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
     then
         easyapache_site_SSLCertificateKeyFile="$1"
         echo -e "${BOLD}> ${LGREEN}The SSL Key Path has been modified successfully.${RESET}"
