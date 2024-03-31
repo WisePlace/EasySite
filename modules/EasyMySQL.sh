@@ -11,25 +11,6 @@ easymysql_author="WisePlace"
 . /etc/EasySite/EasySite_env
 easymysql_token="$easysite_bin/EasyMySQL_token.txt"
 
-#### COLORS ####
-RED="\e[31m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-BLUE="\e[34m"
-MAGENTA="\e[35m"
-CYAN="\e[36m"
-LGRAY="\e[37m"
-GRAY="\e[90m"
-LRED="\e[91m"
-LGREEN="\e[92m"
-LYELLOW="\e[93m"
-LBLUE="\e[94m"
-LMAGENTA="\e[95m"
-LCYAN="\e[96m"
-WHITE="\e[97m"
-RESET="\e[0m"
-BOLD="\e[1m"
-
 ### FUNCTIONS ###
 easymysql_connection(){
     if output=$(mysql -h $easymysql_host -u $easymysql_user -p$easymysql_password -e "SELECT 1;" 2>&1)
@@ -181,15 +162,17 @@ easymysql_flush(){
 }
 
 easymysql_token_check(){
-    if [ -f "$easymysql_token" ]
+    if easysite_file_check "$easymysql_token"
     then
         . "$easymysql_token"
     else
-        touch "$easymysql_token"
-        echo "easymysql_session=" >> $easymysql_token
-        echo "easymysql_host=" >> $easymysql_token
-        echo "easymysql_user=" >> $easymysql_token
-        echo "easymysql_password=" >> $easymysql_token
+        if easysite_file_create "$easymysql_token"
+        then
+            echo "easymysql_session=" >> $easymysql_token
+            echo "easymysql_host=" >> $easymysql_token
+            echo "easymysql_user=" >> $easymysql_token
+            echo "easymysql_password=" >> $easymysql_token
+        fi
     fi
 }
 
