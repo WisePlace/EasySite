@@ -17,6 +17,7 @@ easysite_env="$easysite_etc/EasySite_env"
 
 modules_source="https://web.luka-laurent.fr/EasySite/modules"
 templates_source="https://web.luka-laurent.fr/EasySite/templates"
+env_source="https://web.luka.laurent.fr/EasySite/bin/EasySite_env"
 
 IP=$(hostname -I)
 local_mysql="None"
@@ -116,18 +117,7 @@ easysite_check(){
         mkdir -p "$easysite_modules" "$easysite_bin" "$easysite_templates"
         touch "$easysite_conf"
         echo "local_mysql=$local_mysql" >> "$easysite_conf"
-		touch "$easysite_env"
-		echo 'easysite_etc=/etc/EasySite' >> "$easysite_env"
-        echo 'easysite_conf=$easysite_etc/EasySite.conf' >> "$easysite_env"
-        echo 'easysite_modules=$easysite_etc/modules' >> "$easysite_env"
-        echo 'easysite_bin=$easysite_etc/bin' >> "$easysite_env"
-        echo 'easysite_templates=$easysite_etc/templates' >> "$easysite_env"
-        echo 'easysite_env=$easysite_etc/EasySite_env' >> "$easysite_env"
-        echo 'apache_dir=/etc/apache2' >> "$easysite_env"
-        echo 'apache_en_dir=$apache_dir/sites-enabled' >> "$easysite_env"
-        echo 'apache_av_dir=$apache_dir/sites-available' >> "$easysite_env"
-        echo "apache_en_list=()" >> "$easysite_env"
-        echo "apache_av_list=()" >> "$easysite_env"
+	wget -O "$easysite_etc/EasySite_env" "$env_source" >/dev/null 2>&1
         cp -f "$0" "$easysite_modules/EasySite.sh"
         ln -f -s "$easysite_modules/EasySite.sh" "/usr/local/bin/EasySite"
         wget -O "$easysite_modules/EasyMySQL.sh" "$modules_source/EasyMySQL.sh" >/dev/null 2>&1
