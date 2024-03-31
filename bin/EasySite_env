@@ -1,1 +1,137 @@
+easysite_etc=/etc/EasySite
+apache_dir=/etc/apache2
+mysql_dir=/etc/mysql
+php_dir=/etc/php
 
+easysite_conf=$easysite_etc/EasySite.conf
+easysite_modules=$easysite_etc/modules
+easysite_bin=$easysite_etc/bin
+easysite_templates=$easysite_etc/templates
+easysite_env=$easysite_etc/EasySite_env
+
+IP=$(hostname -I)
+
+apache_en_dir=$apache_dir/sites-enabled
+apache_av_dir=$apache_dir/sites-available
+apache_conf=$apache_dir/apache2.conf
+apache_en_list=()
+apache_av_list=()
+
+RED="\e[31m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+BLUE="\e[34m"
+MAGENTA="\e[35m"
+CYAN="\e[36m"
+LGRAY="\e[37m"
+GRAY="\e[90m"
+LRED="\e[91m"
+LGREEN="\e[92m"
+LYELLOW="\e[93m"
+LBLUE="\e[94m"
+LMAGENTA="\e[95m"
+LCYAN="\e[96m"
+WHITE="\e[97m"
+RESET="\e[0m"
+BOLD="\e[1m"
+
+easysite_file_create(){
+    if [ -f "$1" ]
+    then
+        echo -e "${BOLD}> ${LRED}The file ${LYELLOW}$1 ${LRED}already exists.${RESET}"
+    else
+        if output=$(touch "$1" 2>&1)
+        then
+            return
+        else
+            echo -e "${RED}Failed to create file ${LYELLOW}$1 ${RED}: ${LRED}$output${RESET}"
+        fi
+    fi
+}
+
+easysite_file_delete(){
+    if [ ! -f "$1" ]
+    then
+        echo -e "${BOLD}> ${LRED}The file ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
+    else
+        if output=$(rm "$1" 2>&1)
+        then
+            return
+        else
+            echo -e "${RED}Failed to delete file ${LYELLOW}$1 ${RED}: ${LRED}$output${RESET}"
+        fi
+    fi
+}
+
+easysite_dir_create(){
+    if [ -d "$1" ]
+    then
+        echo -e "${BOLD}> ${LRED}The directory ${LYELLOW}$1 ${LRED}already exists.${RESET}"
+    else
+        if output=$(mkdir "$1" 2>&1)
+        then
+            return
+        else
+            echo -e "${RED}Failed to create directory ${LYELLOW}$1 ${RED}: ${LRED}$output${RESET}"
+        fi
+    fi
+}
+
+easysite_dir_delete(){
+    if [ ! -d "$1" ]
+    then
+        echo -e "${BOLD}> ${LRED}The directory ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
+    else
+        if output=$(rmdir "$1" 2>&1)
+        then
+            return
+        else
+            echo -e "${RED}Failed to delete directory ${LYELLOW}$1 ${RED}: ${LRED}$output${RESET}"
+        fi
+    fi
+}
+
+easysite_service_enable(){
+    if output=$(systemctl enable "$1" 2>&1)
+    then
+        return
+    else
+        echo -e "${RED}Failed to enable ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+    fi
+}
+
+easysite_service_start(){
+    if output=$(systemctl start "$1" 2>&1)
+    then
+        return
+    else
+        echo -e "${RED}Failed to start ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+    fi
+}
+
+easysite_service_stop(){
+    if output=$(systemctl stop "$1" 2>&1)
+    then
+        return
+    else
+        echo -e "${RED}Failed to stop ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+    fi
+}
+
+easysite_service_reload(){
+    if output=$(systemctl reload "$1" 2>&1)
+    then
+        return
+    else
+        echo -e "${RED}Failed to reload ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+    fi
+}
+
+easysite_service_restart(){
+    if output=$(systemctl restart "$1" 2>&1)
+    then
+        return
+    else
+        echo -e "${RED}Failed to restart ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+    fi
+}
