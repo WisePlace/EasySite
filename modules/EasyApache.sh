@@ -93,9 +93,9 @@ easyapache_site_delete(){
     easyapache_site_DocumentRoot=$(grep 'DocumentRoot' "$apache_av_dir/$easyapache_site_file" 2>/dev/null | awk '{print $2}')
     if easysite_file_check "$apache_av_dir/$1"
     then
-        easysite_file_delete "$apache_av_dir/$1" 2>&1
-        easysite_file_delete "$apache_en_dir/$1" 2>&1
-        easysite_dir_delete "$easyapache_site_DocumentRoot" 2>&1
+        a2dissite "$1" >/dev/null 2>&1
+        easysite_file_delete "$apache_av_dir/$1"
+        easysite_dir_delete "$easyapache_site_DocumentRoot"
         echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been deleted.${RESET}"
     else
         echo -e "${RED}Failed to delete site: ${LRED}This site doesn't exists.${RESET}"
