@@ -186,7 +186,7 @@ easyapache_site_modify_ServerName(){
 easyapache_site_modify_Alias(){
     if [ -z "$easyapache_site_Alias" ]
     then
-        if output=$(sed -i -e "/^\(\s*\)ServerName\s\+.*$/a\\\1Alias $1 $easyapache_site_AliasDir" "$apache_av_dir/$easyapache_site_file" 2>&1)
+        if output=$(sed -i -e "/^\(\s*\)ServerName\s\+.*$/a\\        Alias /test $easyapache_site_DocumentRoot" "$apache_av_dir/$easyapache_site_file" 2>&1)
         then
             easyapache_site_Alias="$1"
             echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
