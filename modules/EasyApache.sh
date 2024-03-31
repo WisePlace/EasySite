@@ -163,6 +163,10 @@ easyapache_site_modify_ServerName(){
     echo "Yes"
 }
 
+easyapache_site_modify_Alias(){
+    echo "Yes"
+}
+
 easyapache_site_modify_SSLCertificate(){
     echo "Yes"
 }
@@ -301,21 +305,27 @@ easyapache_menu_modify(){ #$easyapache_site_file
         echo -e "${LYELLOW}1. Configuration File${RESET}"
         echo -e "${LYELLOW}2. Files directory${RESET}"
         echo -e "${LYELLOW}3. URL${RESET}"
+        echo -e "${LYELLOW}4. Alias${RESET}"
         if [ "$easyapache_site_SSLEngine" == "on" ] || [ "$easyapache_site_SSLEngine" == "On" ] || [ "$easyapache_site_SSLEngine" == "ON" ]
         then
             bin="true"
-            echo -e "${LYELLOW}4. SSL Certificate Path${RESET}"
-            echo -e "${LYELLOW}5. SSL Key Path${RESET}"
-            echo -e "${LYELLOW}6. Open in File Editor${RESET}"
-            echo -e "${YELLOW}7. Back${RESET}"
+            echo -e "${LYELLOW}5. SSL Certificate Path${RESET}"
+            echo -e "${LYELLOW}6. SSL Key Path${RESET}"
+            echo -e "${LYELLOW}7. Open in File Editor${RESET}"
+            echo -e "${YELLOW}8. Back${RESET}"
         else
             bin="false"
-            echo -e "${LYELLOW}4. Enable SSL${RESET}"
-            echo -e "${LYELLOW}5. Open in File Editor${RESET}"
-            echo -e "${YELLOW}6. Back${RESET}"
+            echo -e "${LYELLOW}5. Enable SSL${RESET}"
+            echo -e "${LYELLOW}6. Open in File Editor${RESET}"
+            echo -e "${YELLOW}7. Back${RESET}"
         fi
         echo " "
-        read -p "$(echo -e "${LCYAN}Select an option to modify(1-6):${RESET} ")" easyapache_menu_modify_choice
+        if [ "$bin" == "true" ]
+        then
+            read -p "$(echo -e "${LCYAN}Select an option to modify(1-8):${RESET} ")" easyapache_menu_modify_choice
+        else
+            read -p "$(echo -e "${LCYAN}Select an option to modify(1-7):${RESET} ")" easyapache_menu_modify_choice
+        fi
         case $easyapache_menu_modify_choice in
             1)
                 read -p "$(echo -e "${LCYAN}Enter new Configuration File name:${RESET} ")" easyapache_site_new_file
@@ -340,6 +350,12 @@ easyapache_menu_modify(){ #$easyapache_site_file
                 easyapache_site_modify_ServerName $easyapache_site_ServerName $easyapache_site_new_ServerName
                 ;;
             4)
+                read -p "$(echo -e "${LCYAN}Enter new Alias (${LYELLOW}/ included${LCYAN}):${RESET} ")" easyapache_site_new_Alias
+                clear
+                echo " "
+                easyapache_site_modify_Alias $easyapache_site_Alias $easyapache_site_new_Alias
+                ;;
+            5)
                 if [ "$bin" == "true" ]
                 then
                     read -p "$(echo -e "${LCYAN}Enter new SSL Certificate Path:${RESET} ")" easyapache_site_new_SSLCertificate
@@ -352,7 +368,7 @@ easyapache_menu_modify(){ #$easyapache_site_file
                     easyapache_site_enable_SSL $easyapache_site_file
                 fi
                 ;;
-            5)
+            6)
                 if [ "$bin" == "true" ]
                 then
                     read -p "$(echo -e "${LCYAN}Enter new SSL Key Path:${RESET} ")" easyapache_site_new_SSLCertificateKey
@@ -362,27 +378,27 @@ easyapache_menu_modify(){ #$easyapache_site_file
                 else
                     clear
                     echo " "
-                    nano "$apache_av_dir/$easysite_site_file"
-                fi
-                ;;
-            6)
-                if [ "$bin" == "true" ]
-                then
-                    clear
-                    echo " "
-                    nano "$apache_av_dir/$easysite_site_file"
-                else
-                    easyapache_menu_main
+                    nano "$apache_av_dir/$easyapache_site_file"
                 fi
                 ;;
             7)
                 if [ "$bin" == "true" ]
                 then
+                    clear
+                    echo " "
+                    nano "$apache_av_dir/$easyapache_site_file"
+                else
+                    easyapache_menu_main
+                fi
+                ;;
+            8)
+                if [ "$bin" == "true" ]
+                then
                     easyapache_menu_main
                 else
                     clear
                     echo " "
-                    echo -e "${BOLD}> ${LRED}Invalid option. Please enter a number from 1 to 6.${RESET}"
+                    echo -e "${BOLD}> ${LRED}Invalid option. Please enter a number from 1 to 7.${RESET}"
                 fi
                 ;;
             *)
@@ -390,11 +406,11 @@ easyapache_menu_modify(){ #$easyapache_site_file
                 then
                     clear
                     echo " "
-                    echo -e "${BOLD}> ${LRED}Invalid option. Please enter a number from 1 to 7.${RESET}"
+                    echo -e "${BOLD}> ${LRED}Invalid option. Please enter a number from 1 to 8.${RESET}"
                 else
                     clear
                     echo " "
-                    echo -e "${BOLD}> ${LRED}Invalid option. Please enter a number from 1 to 6.${RESET}"
+                    echo -e "${BOLD}> ${LRED}Invalid option. Please enter a number from 1 to 7.${RESET}"
                 fi
                 ;;
         esac
