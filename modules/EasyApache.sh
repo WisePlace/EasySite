@@ -155,8 +155,8 @@ easyapache_site_modify_file(){
     if easysite_file_rename "$apache_av_dir/$easyapache_site_file" "$apache_av_dir/$1"
     then
         easyapache_site_file="$1"
-        echo -e "${BOLD}> ${LGREEN}The configuration file has been renamed to ${LYELLOW}$easyapache_site_file${LGREEN}.${RESET}"
         easysite_service_reload "apache2"
+        easyapache_menu_modify $easyapache_site_file
     else
         echo -e "${LRED}An error occured while renaming the configuration file.${RESET}"
     fi
