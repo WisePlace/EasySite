@@ -8,28 +8,7 @@
 easyapache_version=0.8
 easyapache_author="WisePlace"
 
-IP=$(hostname -I)
-
 . /etc/EasySite/EasySite_env
-
-#### COLORS ####
-RED="\e[31m"
-GREEN="\e[32m"
-YELLOW="\e[33m"
-BLUE="\e[34m"
-MAGENTA="\e[35m"
-CYAN="\e[36m"
-LGRAY="\e[37m"
-GRAY="\e[90m"
-LRED="\e[91m"
-LGREEN="\e[92m"
-LYELLOW="\e[93m"
-LBLUE="\e[94m"
-LMAGENTA="\e[95m"
-LCYAN="\e[96m"
-WHITE="\e[97m"
-RESET="\e[0m"
-BOLD="\e[1m"
 
 ### FUNCTIONS ###
 easyapache_site_list_show(){
@@ -58,13 +37,13 @@ easyapache_site_status_get(){ #$easyapache_site_file
 
 easyapache_site_status_switch(){ #$easyapache_site_file
     easyapache_site_name="${1%.conf}"
-    if [ -f "$apache_av_dir/$1" ]
+    if easysite_file_check "$apache_av_dir/$1"
     then
         easyapache_site_status_get "$1"
         if [ "$easyapache_site_status" == "enabled" ]
         then
             a2dissite "$1" >/dev/null 2>&1
-            if output=$(systemctl reload apache2 2>&1)
+            if easysite_service_reload "apache2"
             then
                 echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been disabled.${RESET}"
             else
@@ -72,7 +51,7 @@ easyapache_site_status_switch(){ #$easyapache_site_file
             fi
         else
             a2ensite "$1" >/dev/null 2>&1
-            if output=$(systemctl reload apache2 2>&1)
+            if easysite_service_reload "apache2"
             then
                 echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been enabled.${RESET}"
             else
@@ -86,7 +65,7 @@ easyapache_site_status_switch(){ #$easyapache_site_file
 
 easyapache_site_create(){ #$easyapache_site_file $easyapache_site_DocumentRoot $easyapache_site_ServerName $easyapache_site_Alias
     easyapache_site_name="${easyapache_site_file%.conf}"
-    if [ -f "$apache_av_dir/$1" ]
+    if easysite_file_check "$apache_av_dir/$1"
     then
         echo -e "${BOLD}> ${LRED}This site already exists.${RESET}"
     else
@@ -102,9 +81,9 @@ easyapache_site_create(){ #$easyapache_site_file $easyapache_site_DocumentRoot $
             echo '        $4 $2' >> "$apache_av_dir/$1"
         fi
         echo "</VirtualHost>" >> "$apache_av_dir/$1"
-        if [ ! -d "$easyapache_site_DocumentRoot" ]
+        if ! easysite_dir_check "$easyapache_site_DocumentRoot"
         then
-            mkdir "$easyapache_site_DocumentRoot" >/dev/null 2>&1
+            easysite_dir_create "$easyapache_site_DocumentRoot"
         fi
         echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been created.${RESET}"
     fi
@@ -113,11 +92,11 @@ easyapache_site_create(){ #$easyapache_site_file $easyapache_site_DocumentRoot $
 easyapache_site_delete(){ #$easyapache_site_file
     easyapache_site_name="${easyapache_site_file%.conf}"
     easyapache_site_DocumentRoot=$(grep 'DocumentRoot' "$apache_av_dir/$easyapache_site_file" 2>/dev/null | awk '{print $2}')
-    if [ -f "$apache_av_dir/$1" ]
+    if easysite_file_check "$apache_av_dir/$1"
     then
-        rm -r "$apache_av_dir/$1" >/dev/null 2>&1
-        rm -r "$apache_en_dir/$1" >/dev/null 2>&1
-        rm -r "$easyapache_site_DocumentRoot" >/dev/null 2>&1
+        easysite_file_delete "$apache_av_dir/$1"
+        easysite_file_delete "$apache_en_dir/$1"
+        easysite_dir_delete "$easyapache_site_DocumentRoot"
         echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been deleted.${RESET}"
     else
         echo -e "${RED}Failed to delete site: ${LRED}This site doesn't exists.${RESET}"
@@ -140,7 +119,7 @@ easyapache_site_get(){ #$easyapache_site_file
 }
 
 easyapache_site_show(){ #$easyapache_site_file
-    if [ -f "$apache_av_dir/$1" ]
+    if easysite_file_check "$apache_av_dir/$1"
     then
         easyapache_site_get "$1"
         echo -e "> ${LMAGENTA}Configuration file: ${YELLOW}$easyapache_site_file${RESET}"
@@ -248,7 +227,7 @@ easyapache_menu_main(){
                 then
                     easyapache_site_file="$easyapache_site_file.conf"
                 fi
-                if [ -f "$apache_av_dir/$easyapache_site_file" ]
+                if easysite_file_check "$apache_av_dir/$easyapache_site_file"
                 then
                     easyapache_menu_modify "$easyapache_site_file"
                 else
