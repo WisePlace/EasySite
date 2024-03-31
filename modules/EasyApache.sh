@@ -248,12 +248,7 @@ easyapache_menu_main(){
         case $easyapache_menu_main_choice in
             1)
                 read -p "$(echo -e "${LCYAN}Enter site name to create:${RESET} ")" easyapache_site_file
-                if [ "$easyapache_site_file" == "" ] || [ "$easyapache_site_file" == " " ] || [ "$easyapache_site_file" == " .conf" ] || [ "$easyapache_site_file" == ".conf" ]
-                then
-                    clear
-                    echo " "
-                    echo -e "${RED}Site name can't be empty.${RESET}"
-                elif [[ "$easyapache_site_file" == *.conf ]]
+                if [[ "$easyapache_site_file" == *.conf ]]
                 then
                     easyapache_site_name="${easyapache_site_file%.conf}"
                 else
