@@ -148,31 +148,73 @@ easyapache_site_show(){
 
 
 easyapache_site_enable_SSL(){
-    echo "Yes"
+    echo "> Not implemented yet."
 }
 
 easyapache_site_modify_file(){
-    echo "Yes"
+    if easysite_file_rename "$apache_av_dir/$easyapache_site_file" "$apache_av_dir/$1"
+    then
+        easyapache_site_file="$1"
+        echo -e "${BOLD}> ${LGREEN}The configuration file has been renamed to ${LYELLOW}$easyapache_site_file${LGREEN}.${RESET}"
+        easysite_service_reload "apache2"
+    else
+        echo -e "${LRED}An error occured while renaming the configuration file.${RESET}"
+    fi
 }
 
 easyapache_site_modify_DocumentRoot(){
-    echo "Yes"
+    if output=$(sed -i "s/^\s*DocumentRoot\s\+.*/DocumentRoot $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    then
+        easyapache_site_DocumentRoot="$1"
+        echo -e "${BOLD}> ${LGREEN}The Files Directory has been modified successfully.${RESET}"
+        easysite_service_reload "apache2"
+    else
+        echo -e "${RED}Failed to modify Files Directory: ${LRED}$output${RESET}"
+    fi
 }
 
 easyapache_site_modify_ServerName(){
-    echo "Yes"
+    if output=$(sed -i "s/^\s*ServerName\s\+.*/ServerName $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    then
+        easyapache_site_ServerName="$1"
+        echo -e "${BOLD}> ${LGREEN}The URL has been modified successfully.${RESET}"
+        easysite_service_reload "apache2"
+    else
+        echo -e "${RED}Failed to modify URL: ${LRED}$output${RESET}"
+    fi
 }
 
 easyapache_site_modify_Alias(){
-    echo "Yes"
+    if output=$(sed -i "s/^\s*Alias\s\+.*/Alias $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    then
+        easyapache_site_Alias="$1"
+        echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
+        easysite_service_reload "apache2"
+    else
+        echo -e "${RED}Failed to modify Alias: ${LRED}$output${RESET}"
+    fi
 }
 
-easyapache_site_modify_SSLCertificate(){
-    echo "Yes"
+easyapache_site_modify_SSLCertificateFile(){
+    if output=$(sed -i "s/^\s*SSLCertificateFile\s\+.*/SSLCertificateFile $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    then
+        easyapache_site_SSLCertificateFile="$1"
+        echo -e "${BOLD}> ${LGREEN}The SSL Certificate Path has been modified successfully.${RESET}"
+        easysite_service_reload "apache2"
+    else
+        echo -e "${RED}Failed to modify SSL Certificate Path: ${LRED}$output${RESET}"
+    fi
 }
 
-easyapache_site_modify_SSLCertificateKey(){
-    echo "Yes"
+easyapache_site_modify_SSLCertificateKeyFile(){
+    if output=$(sed -i "s/^\s*SSLCertificateKeyFile\s\+.*/SSLCertificateKeyFile $1/" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    then
+        easyapache_site_SSLCertificateKeyFile="$1"
+        echo -e "${BOLD}> ${LGREEN}The SSL Key Path has been modified successfully.${RESET}"
+        easysite_service_reload "apache2"
+    else
+        echo -e "${RED}Failed to modify SSL Key Path: ${LRED}$output${RESET}"
+    fi
 }
 
 easyapache_menu_main(){
@@ -335,33 +377,33 @@ easyapache_menu_modify(){ #$easyapache_site_file
                 fi
                 clear
                 echo " "
-                easyapache_site_modify_file $easyapache_site_file $easyapache_site_new_file
+                easyapache_site_modify_file $easyapache_site_new_file
                 ;;
             2)
                 read -p "$(echo -e "${LCYAN}Enter new Files Directory:${RESET} ")" easyapache_site_new_DocumentRoot
                 clear
                 echo " "
-                easyapache_site_modify_DocumentRoot $easyapache_site_DocumentRoot $easyapache_site_new_DocumentRoot
+                easyapache_site_modify_DocumentRoot $easyapache_site_new_DocumentRoot
                 ;;
             3)
                 read -p "$(echo -e "${LCYAN}Enter new URL:${RESET} ")" easyapache_site_new_ServerName
                 clear
                 echo " "
-                easyapache_site_modify_ServerName $easyapache_site_ServerName $easyapache_site_new_ServerName
+                easyapache_site_modify_ServerName $easyapache_site_new_ServerName
                 ;;
             4)
                 read -p "$(echo -e "${LCYAN}Enter new Alias (${LYELLOW}/ included${LCYAN}):${RESET} ")" easyapache_site_new_Alias
                 clear
                 echo " "
-                easyapache_site_modify_Alias $easyapache_site_Alias $easyapache_site_new_Alias
+                easyapache_site_modify_Alias $easyapache_site_new_Alias
                 ;;
             5)
                 if [ "$bin" == "true" ]
                 then
-                    read -p "$(echo -e "${LCYAN}Enter new SSL Certificate Path:${RESET} ")" easyapache_site_new_SSLCertificate
+                    read -p "$(echo -e "${LCYAN}Enter new SSL Certificate Path:${RESET} ")" easyapache_site_new_SSLCertificateFile
                     clear
                     echo " "
-                    easyapache_site_modify_SSLCertificate $easyapache_site_SSLCertificate $easyapache_site_new_SSLCertificate
+                    easyapache_site_modify_SSLCertificateFile $easyapache_site_new_SSLCertificateFile
                 else
                     clear
                     echo " "
@@ -371,10 +413,10 @@ easyapache_menu_modify(){ #$easyapache_site_file
             6)
                 if [ "$bin" == "true" ]
                 then
-                    read -p "$(echo -e "${LCYAN}Enter new SSL Key Path:${RESET} ")" easyapache_site_new_SSLCertificateKey
+                    read -p "$(echo -e "${LCYAN}Enter new SSL Key Path:${RESET} ")" easyapache_site_new_SSLCertificateKeyFile
                     clear
                     echo " "
-                    easyapache_site_modify_SSLCertificateKey $easyapache_site_SSLCertificateKey $easyapache_site_new_SSLCertificateKey
+                    easyapache_site_modify_SSLCertificateKeyFile $easyapache_site_new_SSLCertificateKeyFile
                 else
                     clear
                     echo " "
