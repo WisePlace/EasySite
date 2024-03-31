@@ -17,7 +17,7 @@ easysite_env="$easysite_etc/EasySite_env"
 
 modules_source="https://web.luka-laurent.fr/EasySite/modules"
 templates_source="https://web.luka-laurent.fr/EasySite/templates"
-env_source="https://web.luka.laurent.fr/EasySite/bin/EasySite_env"
+env_source="https://web.luka-laurent.fr/EasySite/bin/EasySite_env"
 
 IP=$(hostname -I)
 local_mysql="None"
