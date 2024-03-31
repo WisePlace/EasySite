@@ -4,9 +4,7 @@
 - **Run :** `./EasySite.sh`
 - **Basic commands :**
 
-> *Start EasyApache Main Menu*
-
-EasySite apache
+EasySite apache > *Start EasyApache Main Menu*
 
 >*Start EasyMySQL Main Menu*
 
