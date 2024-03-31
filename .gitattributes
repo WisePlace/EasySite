@@ -1,2 +1,4 @@
+git rm -rf --cached .
+git reset --hard HEAD
 git config --global core.autocrlf false
 *.sh text eol=lf
