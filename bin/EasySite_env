@@ -35,8 +35,17 @@ WHITE="\e[97m"
 RESET="\e[0m"
 BOLD="\e[1m"
 
+easysite_file_check(){
+    if [ -f "$1" ]
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
 easysite_file_create(){
-    if [ -f "$1" ] || [ -d "$1" ]
+    if easysite_file_check "$1" || easysite_dir_check "$1"
     then
         echo -e "${BOLD}> ${LRED}A file or directory named ${LYELLOW}$1 ${LRED}already exists.${RESET}"
     else
@@ -50,7 +59,7 @@ easysite_file_create(){
 }
 
 easysite_file_delete(){
-    if [ ! -f "$1" ]
+    if ! easysite_file_check "$1"
     then
         echo -e "${BOLD}> ${LRED}The file ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
     else
@@ -63,8 +72,17 @@ easysite_file_delete(){
     fi
 }
 
+easysite_dir_check(){
+    if [ -d "$1" ]
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
 easysite_dir_create(){
-    if [ -d "$1" ] || [ -f "$1" ]
+    if easysite_dir_check "$1" || easysite_file_check "$1"
     then
         echo -e "${BOLD}> ${LRED}A file or directory named ${LYELLOW}$1 ${LRED}already exists.${RESET}"
     else
@@ -78,7 +96,7 @@ easysite_dir_create(){
 }
 
 easysite_dir_delete(){
-    if [ ! -d "$1" ]
+    if ! easysite_dir_check "$1"
     then
         echo -e "${BOLD}> ${LRED}The directory ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
     else
@@ -91,8 +109,17 @@ easysite_dir_delete(){
     fi
 }
 
-easysite_service_enable(){
+easysite_service_check(){
     if systemctl status "$1" >/dev/null 2>&1
+    then
+        return 0
+    else
+        return 1
+    fi
+}
+
+easysite_service_enable(){
+    if easysite_service_check "$1"
     then
         if output=$(systemctl enable "$1" 2>&1)
         then
@@ -106,7 +133,7 @@ easysite_service_enable(){
 }
 
 easysite_service_start(){
-    if systemctl status "$1" >/dev/null 2>&1
+    if easysite_service_check "$1"
     then
         if output=$(systemctl start "$1" 2>&1)
         then
@@ -120,7 +147,7 @@ easysite_service_start(){
 }
 
 easysite_service_stop(){
-    if systemctl status "$1" >/dev/null 2>&1
+    if easysite_service_check "$1"
     then
         if output=$(systemctl stop "$1" 2>&1)
         then
@@ -134,7 +161,7 @@ easysite_service_stop(){
 }
 
 easysite_service_reload(){
-    if systemctl status "$1" >/dev/null 2>&1
+    if easysite_service_check "$1"
     then
         if output=$(systemctl reload "$1" 2>&1)
         then
@@ -148,9 +175,9 @@ easysite_service_reload(){
 }
 
 easysite_service_restart(){
-    if systemctl status "$1" >/dev/null 2>&1
+    if easysite_service_check "$1"
     then
-        if output=$(systemctl start "$1" 2>&1)
+        if output=$(systemctl restart "$1" 2>&1)
         then
             return
         else
