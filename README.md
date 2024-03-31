@@ -4,12 +4,8 @@
 - **Run :** `./EasySite.sh`
 - **Basic commands :**
 
-EasySite apache > *Start EasyApache Main Menu*
+EasySite apache #*Start EasyApache Main Menu*
 
->*Start EasyMySQL Main Menu*
+EasySite mysql #*Start EasyMySQL Main Menu*
 
-EasySite mysql
-
-> *Remove EasySite*
-
-EasySite remove
+EasySite remove #*Remove EasySite*
