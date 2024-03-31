@@ -4,8 +4,10 @@
 - **Run :** `./EasySite.sh`
 - **Basic commands :**
 
+```diff
 EasySite apache #*Start EasyApache Main Menu*
 
 EasySite mysql #*Start EasyMySQL Main Menu*
 
 EasySite remove #*Remove EasySite*
+```
