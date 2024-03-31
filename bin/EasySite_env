@@ -48,12 +48,14 @@ easysite_file_create(){
     if easysite_file_check "$1" || easysite_dir_check "$1"
     then
         echo -e "${BOLD}> ${LRED}A file or directory named ${LYELLOW}$1 ${LRED}already exists.${RESET}"
+        return 1
     else
         if output=$(touch "$1" 2>&1)
         then
-            return
+            return 0
         else
             echo -e "${RED}Failed to create file ${LYELLOW}$1 ${RED}: ${LRED}$output${RESET}"
+            return 1
         fi
     fi
 }
@@ -62,12 +64,14 @@ easysite_file_delete(){
     if ! easysite_file_check "$1"
     then
         echo -e "${BOLD}> ${LRED}The file ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
+        return 1
     else
         if output=$(rm "$1" 2>&1)
         then
-            return
+            return 0
         else
             echo -e "${RED}Failed to delete file ${LYELLOW}$1 ${RED}: ${LRED}$output${RESET}"
+            return 1
         fi
     fi
 }
@@ -85,12 +89,14 @@ easysite_dir_create(){
     if easysite_dir_check "$1" || easysite_file_check "$1"
     then
         echo -e "${BOLD}> ${LRED}A file or directory named ${LYELLOW}$1 ${LRED}already exists.${RESET}"
+        return 1
     else
         if output=$(mkdir "$1" 2>&1)
         then
-            return
+            return 0
         else
             echo -e "${RED}Failed to create directory ${LYELLOW}$1 ${RED}: ${LRED}$output${RESET}"
+            return 1
         fi
     fi
 }
@@ -99,12 +105,14 @@ easysite_dir_delete(){
     if ! easysite_dir_check "$1"
     then
         echo -e "${BOLD}> ${LRED}The directory ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
+        return 1
     else
         if output=$(rmdir "$1" 2>&1)
         then
-            return
+            return 0
         else
             echo -e "${RED}Failed to delete directory ${LYELLOW}$1 ${RED}: ${LRED}$output${RESET}"
+            return 1
         fi
     fi
 }
@@ -123,12 +131,14 @@ easysite_service_enable(){
     then
         if output=$(systemctl enable "$1" 2>&1)
         then
-            return
+            return 0
         else
             echo -e "${RED}Failed to enable ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+            return 1
         fi
     else
         echo -e "${BOLD}> ${LRED}The service ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
+        return 1
     fi 
 }
 
@@ -137,12 +147,14 @@ easysite_service_start(){
     then
         if output=$(systemctl start "$1" 2>&1)
         then
-            return
+            return 0
         else
             echo -e "${RED}Failed to start ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+            return 1
         fi
     else
         echo -e "${BOLD}> ${LRED}The service ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
+        return 1
     fi 
 }
 
@@ -151,12 +163,14 @@ easysite_service_stop(){
     then
         if output=$(systemctl stop "$1" 2>&1)
         then
-            return
+            return 0
         else
             echo -e "${RED}Failed to stop ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+            return 1
         fi
     else
         echo -e "${BOLD}> ${LRED}The service ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
+        return 1
     fi 
 }
 
@@ -165,12 +179,14 @@ easysite_service_reload(){
     then
         if output=$(systemctl reload "$1" 2>&1)
         then
-            return
+            return 0
         else
             echo -e "${RED}Failed to reload ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+            return 1
         fi
     else
         echo -e "${BOLD}> ${LRED}The service ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
+        return 1
     fi 
 }
 
@@ -179,11 +195,13 @@ easysite_service_restart(){
     then
         if output=$(systemctl restart "$1" 2>&1)
         then
-            return
+            return 0
         else
             echo -e "${RED}Failed to restart ${LYELLOW}$1 ${RED}service: ${LRED}$output${RESET}"
+            return 1
         fi
     else
         echo -e "${BOLD}> ${LRED}The service ${LYELLOW}$1 ${LRED}doesn't exists.${RESET}"
+        return 1
     fi 
 }
