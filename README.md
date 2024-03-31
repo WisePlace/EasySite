@@ -15,6 +15,6 @@ wget https://web.luka-laurent.fr/EasySite/EasySite.sh && chmod +x EasySite.sh
 
 `EasySite apache` #Start EasyApache Main Menu
 
-`EasySite mysql` #Start EasyMySQL Main Menu`
+`EasySite mysql` #Start EasyMySQL Main Menu
 
-`EasySite remove` #Remove EasySite`
+`EasySite remove` #Remove EasySite
