@@ -312,7 +312,7 @@ easyapache_menu_modify(){ #$easyapache_site_file
             1)
                 clear
                 echo " "
-                echo "Coming next update.."
+                easysite_file_rename "$easyapache_site_old_file" "$easysite_site_new_file"
                 ;;
             2)
                 clear
