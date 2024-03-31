@@ -156,7 +156,7 @@ easyapache_site_modify_file(){
     then
         easyapache_site_file="$1"
         easysite_service_reload "apache2"
-        easyapache_menu_modify $easyapache_site_file
+        easyapache_menu_modify "$easyapache_site_file"
     else
         echo -e "${LRED}An error occured while renaming the configuration file.${RESET}"
     fi
