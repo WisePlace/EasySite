@@ -47,7 +47,7 @@ easyapache_site_status_switch(){
             then
                 echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been disabled.${RESET}"
             else
-                echo -e "${RED}Failed to reload apache: ${LRED}$output${RESET}"
+                echo -e "${BOLD}> ${RED}Failed to reload apache: ${LRED}$output${RESET}"
             fi
         else
             a2ensite "$1" >/dev/null 2>&1
@@ -55,7 +55,7 @@ easyapache_site_status_switch(){
             then
                 echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been enabled.${RESET}"
             else
-                echo -e "${RED}Failed to reload apache: ${LRED}$output${RESET}"
+                echo -e "${BOLD}> ${RED}Failed to reload apache: ${LRED}$output${RESET}"
             fi
         fi
     else
@@ -67,7 +67,7 @@ easyapache_site_create(){
     easyapache_site_name="${easyapache_site_file%.conf}"
     if easysite_file_check "$apache_av_dir/$1"
     then
-        echo -e "${BOLD}> ${LRED}This site already exists.${RESET}"
+        echo -e "${BOLD}> ${LRED}The site ${LYELLOW}$1 ${LRED}already exists.${RESET}"
     else
         echo "<VirtualHost *:80>" >> "$apache_av_dir/$1"
         echo "        DocumentRoot $2" >> "$apache_av_dir/$1"
@@ -98,7 +98,7 @@ easyapache_site_delete(){
         easysite_dir_delete "$easyapache_site_DocumentRoot"
         echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been deleted.${RESET}"
     else
-        echo -e "${RED}Failed to delete site: ${LRED}This site doesn't exists.${RESET}"
+        echo -e "${BOLD}> ${RED}Failed to delete site: ${LRED}This site doesn't exists.${RESET}"
     fi
 }
 
@@ -141,7 +141,7 @@ easyapache_site_show(){
             echo -e "> ${LMAGENTA}Site alias directory: ${YELLOW}$easyapache_site_AliasDir${RESET}"
         fi
     else
-        echo -e "${RED}Failed to get site informations: ${LRED}This site doesn't exists.${RESET}"
+        echo -e "${BOLD}> ${RED}Failed to get site informations: ${LRED}This site doesn't exists.${RESET}"
     fi
 }
 
@@ -157,7 +157,7 @@ easyapache_site_modify_file(){
         easysite_service_reload "apache2"
         easyapache_menu_modify "$easyapache_site_file"
     else
-        echo -e "${LRED}An error occured while renaming the configuration file.${RESET}"
+        echo -e "${BOLD}> ${LRED}An error occured while renaming the configuration file.${RESET}"
     fi
 }
 
@@ -168,7 +168,7 @@ easyapache_site_modify_DocumentRoot(){
         echo -e "${BOLD}> ${LGREEN}The Files Directory has been modified successfully.${RESET}"
         easysite_service_reload "apache2"
     else
-        echo -e "${RED}Failed to modify Files Directory: ${LRED}$output${RESET}"
+        echo -e "${BOLD}> ${RED}Failed to modify Files Directory: ${LRED}$output${RESET}"
     fi
 }
 
@@ -179,7 +179,7 @@ easyapache_site_modify_ServerName(){
         echo -e "${BOLD}> ${LGREEN}The URL has been modified successfully.${RESET}"
         easysite_service_reload "apache2"
     else
-        echo -e "${RED}Failed to modify URL: ${LRED}$output${RESET}"
+        echo -e "${BOLD}> ${RED}Failed to modify URL: ${LRED}$output${RESET}"
     fi
 }
 
@@ -188,7 +188,7 @@ easyapache_site_modify_Alias(){
     then
         if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ] || [ "$1" != "/n" ] || [ "$1" != "/N" ]
         then
-            echo -e "${RED}Failed to modify Alias: ${LRED}The current Alias is already empty.${RESET}"
+            echo -e "${BOLD}> ${RED}Failed to modify Alias: ${LRED}The current Alias is already empty.${RESET}"
         else
             if output=$(sed -i -e "/^\(\s*\)ServerName\s\+.*$/a\\        Alias $1 $easyapache_site_DocumentRoot" "$apache_av_dir/$easyapache_site_file" 2>&1)
             then
@@ -196,7 +196,7 @@ easyapache_site_modify_Alias(){
                 echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
                 easysite_service_reload "apache2"
             else
-                echo -e "${RED}Failed to modify Alias: ${LRED}$output${RESET}"
+                echo -e "${BOLD}> ${RED}Failed to modify Alias: ${LRED}$output${RESET}"
             fi
         fi
     else
@@ -209,7 +209,7 @@ easyapache_site_modify_Alias(){
                 echo -e "${BOLD}> ${LGREEN}The Alias has been removed successfully.${RESET}"
                 easysite_service_reload "apache2"
             else
-                echo -e "${RED}Failed to remove Alias: ${LRED}$output${RESET}"
+                echo -e "${BOLD}> ${RED}Failed to remove Alias: ${LRED}$output${RESET}"
             fi
         else
             if output=$(sed -i "s#^\(\s*\)Alias\s\+.*#\1Alias $1 $easyapache_site_AliasDir#" "$apache_av_dir/$easyapache_site_file" 2>&1)
@@ -218,7 +218,7 @@ easyapache_site_modify_Alias(){
                 echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
                 easysite_service_reload "apache2"
             else
-                echo -e "${RED}Failed to modify Alias: ${LRED}$output${RESET}"
+                echo -e "${BOLD}> ${RED}Failed to modify Alias: ${LRED}$output${RESET}"
             fi
         fi
     fi
@@ -231,7 +231,7 @@ easyapache_site_modify_SSLCertificateFile(){
         echo -e "${BOLD}> ${LGREEN}The SSL Certificate Path has been modified successfully.${RESET}"
         easysite_service_reload "apache2"
     else
-        echo -e "${RED}Failed to modify SSL Certificate Path: ${LRED}$output${RESET}"
+        echo -e "${BOLD}> ${RED}Failed to modify SSL Certificate Path: ${LRED}$output${RESET}"
     fi
 }
 
@@ -242,7 +242,7 @@ easyapache_site_modify_SSLCertificateKeyFile(){
         echo -e "${BOLD}> ${LGREEN}The SSL Key Path has been modified successfully.${RESET}"
         easysite_service_reload "apache2"
     else
-        echo -e "${RED}Failed to modify SSL Key Path: ${LRED}$output${RESET}"
+        echo -e "${BOLD}> ${RED}Failed to modify SSL Key Path: ${LRED}$output${RESET}"
     fi
 }
 
@@ -269,6 +269,9 @@ easyapache_menu_main(){
                 if [ "$easyapache_site_file" == "c" ] || [ "$easyapache_site_file" == "C" ]
                 then
                     easyapache_menu_main
+                elif [ "$easyapache_site_file" == "" ] || [ "$easyapache_site_file" == " " ] || [ "$easyapache_site_file" == " .conf" ] ||  || [ "$easyapache_site_file" == ".conf" ]
+                then
+                    echo -e "${BOLD}> ${LRED}Site name can't be empty.${RESET}"
                 else
                     if [[ "$easyapache_site_file" == *.conf ]]
                     then
@@ -352,7 +355,7 @@ easyapache_menu_main(){
                     else
                         clear
                         echo " "
-                        echo -e "${RED}Failed to modify site: ${LRED}This site doesn't exists.${RESET}"
+                        echo -e "${BOLD}> ${RED}Failed to modify site: ${LRED}This site doesn't exists.${RESET}"
                     fi
                 fi
                 ;;
