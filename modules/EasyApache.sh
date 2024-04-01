@@ -186,7 +186,7 @@ easyapache_site_modify_ServerName(){
 easyapache_site_modify_Alias(){
     if [ -z "$easyapache_site_Alias" ]
     then
-        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ] || [ "$1" != "/n" ] || [ "$1" != "/N" ]
+        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ] || [ "$1" == "/n" ] || [ "$1" == "/N" ]
         then
             echo -e "${BOLD}> ${RED}Failed to modify Alias: ${LRED}The current Alias is already empty.${RESET}"
         else
@@ -200,9 +200,9 @@ easyapache_site_modify_Alias(){
             fi
         fi
     else
-        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ] || [ "$1" != "/n" ] || [ "$1" != "/N" ]
+        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ] || [ "$1" == "/n" ] || [ "$1" == "/N" ]
         then
-            if output=$(sed -i "\#Alias /$easyapache_site_Alias#d" "$apache_av_dir/$easyapache_site_file" 2>&1)
+            if output=$(sed -i "\#Alias $easyapache_site_Alias#d" "$apache_av_dir/$easyapache_site_file" 2>&1)
             then
                 easyapache_site_Alias=""
                 easyapache_site_AliasDir=""
@@ -269,8 +269,10 @@ easyapache_menu_main(){
                 if [ "$easyapache_site_file" == "c" ] || [ "$easyapache_site_file" == "C" ]
                 then
                     easyapache_menu_main
-                elif [ "$easyapache_site_file" == "" ] || [ "$easyapache_site_file" == " " ] || [ "$easyapache_site_file" == " .conf" ] ||  || [ "$easyapache_site_file" == ".conf" ]
+                elif [ "$easyapache_site_file" == "" ] || [ "$easyapache_site_file" == " " ] || [ "$easyapache_site_file" == " .conf" ] || [ "$easyapache_site_file" == ".conf" ]
                 then
+                    clear
+                    echo " "
                     echo -e "${BOLD}> ${LRED}Site name can't be empty.${RESET}"
                 else
                     if [[ "$easyapache_site_file" == *.conf ]]
@@ -288,6 +290,9 @@ easyapache_menu_main(){
                         if [ "$easyapache_site_DocumentRoot" == "" ]
                         then
                             easyapache_site_DocumentRoot="/var/www/html/$easyapache_site_name"
+                        elif [[ "$easyapache_site_DocumentRoot" != /* ]]
+                        then
+                            easyapache_site_DocumentRoot="/$easyapache_site_DocumentRoot"
                         fi
                         read -p "$(echo -e "${LCYAN}Enter site URL (Default: ${LYELLOW}$IP${LCYAN})(${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_ServerName
                         if [ "$easyapache_site_ServerName" == "c" ] || [ "$easyapache_site_ServerName" == "C" ]
@@ -306,6 +311,9 @@ easyapache_menu_main(){
                                 if [ "$easyapache_site_Alias" == "" ]
                                 then
                                     easyapache_site_Alias="/$easyapache_site_name"
+                                elif [[ "$easyapache_site_Alias" != /* ]]
+                                then
+                                    easyapache_site_Alias="/$easyapache_site_Alias"
                                 fi
                                 clear
                                 echo " "
@@ -457,6 +465,13 @@ easyapache_menu_modify(){
                 then
                     easyapache_menu_modify "$easyapache_site_file"
                 else
+                    if [ "$easyapache_site_new_DocumentRoot" == "" ]
+                    then
+                        easyapache_site_new_DocumentRoot="/"
+                    elif [[ "$easyapache_site_new_DocumentRoot" != /* ]]
+                    then
+                        easyapache_site_new_DocumentRoot="/$easyapache_site_new_DocumentRoot"
+                    fi
                     clear
                     echo " "
                     easyapache_site_modify_DocumentRoot "$easyapache_site_new_DocumentRoot"
@@ -474,11 +489,18 @@ easyapache_menu_modify(){
                 fi
                 ;;
             4)
-                read -p "$(echo -e "${LCYAN}Enter new Alias (${LYELLOW}/ included${LCYAN})(${LYELLOW}n for None${LCYAN})(${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_new_Alias
+                read -p "$(echo -e "${LCYAN}Enter new Alias (${LYELLOW}n for None${LCYAN})(${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_new_Alias
                 if [ "$easyapache_site_new_Alias" == "c" ] || [ "$easyapache_site_new_Alias" == "C" ]
                 then
                     easyapache_menu_modify "$easyapache_site_file"
                 else
+                    if [ "$easyapache_site_new_Alias" == "" ]
+                    then
+                        easyapache_site_new_Alias="/"
+                    elif [[ "$easyapache_site_new_Alias" != /* ]]
+                    then
+                        easyapache_site_new_Alias="/$easyapache_site_new_Alias"
+                    fi
                     clear
                     echo " "
                     easyapache_site_modify_Alias "$easyapache_site_new_Alias"
