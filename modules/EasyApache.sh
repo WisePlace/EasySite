@@ -72,7 +72,7 @@ easyapache_site_create(){
         echo "<VirtualHost *:80>" >> "$apache_av_dir/$1"
         echo "        DocumentRoot $2" >> "$apache_av_dir/$1"
         echo "        ServerName $3" >> "$apache_av_dir/$1"
-        if [ "$4" != "n" ] && [ "$4" != "/" ] && [ "$4" != " " ]
+        if [ "$4" != "n" ] && [ "$4" != "N" ] && [ "$4" != "/" ] && [ "$4" != "/ " ] && [ "$4" != "/n" ] && [ "$4" != "/N" ]
         then
             echo "        Alias $4 $2" >> "$apache_av_dir/$1"
         fi
@@ -186,11 +186,11 @@ easyapache_site_modify_ServerName(){
 easyapache_site_modify_Alias(){
     if [ -z "$easyapache_site_Alias" ]
     then
-        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ]
+        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ] || [ "$1" != "/n" ] || [ "$1" != "/N" ]
         then
             echo -e "${RED}Failed to modify Alias: ${LRED}The current Alias is already empty.${RESET}"
         else
-            if output=$(sed -i -e "/^\(\s*\)ServerName\s\+.*$/a\\        Alias /test $easyapache_site_DocumentRoot" "$apache_av_dir/$easyapache_site_file" 2>&1)
+            if output=$(sed -i -e "/^\(\s*\)ServerName\s\+.*$/a\\        Alias $1 $easyapache_site_DocumentRoot" "$apache_av_dir/$easyapache_site_file" 2>&1)
             then
                 easyapache_site_Alias="$1"
                 echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
@@ -200,7 +200,7 @@ easyapache_site_modify_Alias(){
             fi
         fi
     else
-        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ]
+        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ] || [ "$1" != "/n" ] || [ "$1" != "/N" ]
         then
             if output=$(sed -i "\#Alias /$easyapache_site_Alias#d" "$apache_av_dir/$easyapache_site_file" 2>&1)
             then
