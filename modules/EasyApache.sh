@@ -251,61 +251,71 @@ easyapache_menu_main(){
                 if [ "$easyapache_site_file" == "c" ] || [ "$easyapache_site_file" == "C" ]
                 then
                     easyapache_menu_main
-                elif [[ "$easyapache_site_file" == *.conf ]]
-                then
-                    easyapache_site_name="${easyapache_site_file%.conf}"
                 else
-                    easyapache_site_name="$easyapache_site_file"
-                    easyapache_site_file="$easyapache_site_file.conf"
+                    if [[ "$easyapache_site_file" == *.conf ]]
+                    then
+                        easyapache_site_name="${easyapache_site_file%.conf}"
+                    else
+                        easyapache_site_name="$easyapache_site_file"
+                        easyapache_site_file="$easyapache_site_file.conf"
+                    fi
+                    read -p "$(echo -e "${LCYAN}Enter site Files Directory (Default: ${LYELLOW}/var/www/html/$easyapache_site_name${LCYAN}) (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_DocumentRoot
+                    if [ "$easyapache_site_DocumentRoot" == "c" ] || [ "$easyapache_site_DocumentRoot" == "C" ]
+                    then
+                        easyapache_menu_main
+                    else
+                        if [ "$easyapache_site_DocumentRoot" == "" ]
+                        then
+                            easyapache_site_DocumentRoot="/var/www/html/$easyapache_site_name"
+                        fi
+                        read -p "$(echo -e "${LCYAN}Enter site URL (Default: ${LYELLOW}$IP${LCYAN})(${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_ServerName
+                        if [ "$easyapache_site_ServerName" == "c" ] || [ "$easyapache_site_ServerName" == "C" ]
+                        then
+                            easyapache_menu_main
+                        else
+                            if [ "$easyapache_site_ServerName" == "" ]
+                            then
+                                easyapache_site_ServerName="$IP"
+                            fi
+                            read -p "$(echo -e "${LCYAN}Enter site Alias (Default: ${LYELLOW}/$easyapache_site_name${LCYAN})(${LYELLOW}n for None${LCYAN})(${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_Alias
+                            if [ "$easyapache_site_Alias" == "c" ] || [ "$easyapache_site_Alias" == "C" ]
+                            then
+                                easyapache_menu_main
+                            else
+                                if [ "$easyapache_site_Alias" == "" ]
+                                then
+                                    easyapache_site_Alias="/$easyapache_site_name"
+                                fi
+                                clear
+                                echo " "
+                                easyapache_site_create "$easyapache_site_file" "$easyapache_site_DocumentRoot" "$easyapache_site_ServerName" "$easyapache_site_Alias"
+                            fi
+                        fi
+                    fi
                 fi
-                read -p "$(echo -e "${LCYAN}Enter site Files Directory (Default: ${LYELLOW}/var/www/html/$easyapache_site_name${LCYAN}) (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_DocumentRoot
-                if [ "$easyapache_site_DocumentRoot" == "c" ] || [ "$easyapache_site_DocumentRoot" == "C" ]
-                then
-                    easyapache_menu_main
-                elif [ "$easyapache_site_DocumentRoot" == "" ]
-                then
-                    easyapache_site_DocumentRoot="/var/www/html/$easyapache_site_name"
-                fi
-                read -p "$(echo -e "${LCYAN}Enter site URL (Default: ${LYELLOW}$IP${LCYAN})(${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_ServerName
-                if [ "$easyapache_site_ServerName" == "c" ] || [ "$easyapache_site_ServerName" == "C" ]
-                then
-                    easyapache_menu_main
-                elif [ "$easyapache_site_ServerName" == "" ]
-                then
-                    easyapache_site_ServerName="$IP"
-                fi
-                read -p "$(echo -e "${LCYAN}Enter site Alias (Default: ${LYELLOW}/$easyapache_site_name${LCYAN})(${LYELLOW}n for None${LCYAN})(${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_Alias
-                if [ "$easyapache_site_Alias" == "c" ] || [ "$easyapache_site_Alias" == "C" ]
-                then
-                    easyapache_menu_main
-                elif [ "$easyapache_site_Alias" == "" ]
-                then
-                    easyapache_site_Alias="/$easyapache_site_name"
-                fi
-                clear
-                echo " "
-                easyapache_site_create "$easyapache_site_file" "$easyapache_site_DocumentRoot" "$easyapache_site_ServerName" "$easyapache_site_Alias"
                 ;;
             2)
                 read -p "$(echo -e "${LCYAN}Enter site name to delete (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_file
                 if [ "$easyapache_site_file" == "c" ] || [ "$easyapache_site_file" == "C" ]
                 then
                     easyapache_menu_main
-                elif [[ "$easyapache_site_file" == *.conf ]]
-                then
-                    easyapache_site_name="${easyapache_site_file%.conf}"
                 else
-                    easyapache_site_name="$easyapache_site_file"
-                    easyapache_site_file="$easyapache_site_file.conf"
-                fi
-                read -p "$(echo -e "${LCYAN}The site ${LYELLOW}$easyapache_site_name ${LCYAN}will be deleted, are you sure ? ${LYELLOW}[Y/n]${LCYAN}:${RESET} ")" choice
-                if [ "$choice" == "Y" ] || [ "$choice" == "y" ]
-                then
-                    clear
-                    echo " "
-                    easyapache_site_delete "$easyapache_site_file"
-                else
-                    easyapache_menu_main
+                    if [[ "$easyapache_site_file" == *.conf ]]
+                    then
+                        easyapache_site_name="${easyapache_site_file%.conf}"
+                    else
+                        easyapache_site_name="$easyapache_site_file"
+                        easyapache_site_file="$easyapache_site_file.conf"
+                    fi
+                    read -p "$(echo -e "${LCYAN}The site ${LYELLOW}$easyapache_site_name ${LCYAN}will be deleted, are you sure ? ${LYELLOW}[Y/n]${LCYAN}:${RESET} ")" choice
+                    if [ "$choice" == "Y" ] || [ "$choice" == "y" ]
+                    then
+                        clear
+                        echo " "
+                        easyapache_site_delete "$easyapache_site_file"
+                    else
+                        easyapache_menu_main
+                    fi
                 fi
                 ;;
             3)
@@ -313,17 +323,19 @@ easyapache_menu_main(){
                 if [ "$easyapache_site_file" == "c" ] || [ "$easyapache_site_file" == "C" ]
                 then
                     easyapache_menu_main
-                if [[ "$easyapache_site_file" != *.conf ]]
-                then
-                    easyapache_site_file="$easyapache_site_file.conf"
-                fi
-                if easysite_file_check "$apache_av_dir/$easyapache_site_file"
-                then
-                    easyapache_menu_modify "$easyapache_site_file"
                 else
-                    clear
-                    echo " "
-                    echo -e "${RED}Failed to modify site: ${LRED}This site doesn't exists.${RESET}"
+                    if [[ "$easyapache_site_file" != *.conf ]]
+                    then
+                        easyapache_site_file="$easyapache_site_file.conf"
+                    fi
+                    if easysite_file_check "$apache_av_dir/$easyapache_site_file"
+                    then
+                        easyapache_menu_modify "$easyapache_site_file"
+                    else
+                        clear
+                        echo " "
+                        echo -e "${RED}Failed to modify site: ${LRED}This site doesn't exists.${RESET}"
+                    fi
                 fi
                 ;;
             4)
@@ -331,26 +343,30 @@ easyapache_menu_main(){
                 if [ "$easyapache_site_file" == "c" ] || [ "$easyapache_site_file" == "C" ]
                 then
                     easyapache_menu_main
-                if [[ "$easyapache_site_file" != *.conf ]]
-                then
-                    easyapache_site_file="$easyapache_site_file.conf"
+                else
+                    if [[ "$easyapache_site_file" != *.conf ]]
+                    then
+                        easyapache_site_file="$easyapache_site_file.conf"
+                    fi
+                    clear
+                    echo " "
+                    easyapache_site_status_switch "$easyapache_site_file"
                 fi
-                clear
-                echo " "
-                easyapache_site_status_switch "$easyapache_site_file"
                 ;;
             5)
                 read -p "$(echo -e "${LCYAN}Enter site name to display its informations (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_file
                 if [ "$easyapache_site_file" == "c" ] || [ "$easyapache_site_file" == "C" ]
                 then
                     easyapache_menu_main
-                elif [[ "$easyapache_site_file" != *.conf ]]
-                then
-                    easyapache_site_file="$easyapache_site_file.conf"
+                else
+                    if [[ "$easyapache_site_file" != *.conf ]]
+                    then
+                        easyapache_site_file="$easyapache_site_file.conf"
+                    fi
+                    clear
+                    echo " "
+                    easyapache_site_show "$easyapache_site_file"
                 fi
-                clear
-                echo " "
-                easyapache_site_show "$easyapache_site_file"
                 ;;
             6)
                 echo -e "${LMAGENTA}Exiting.${RESET}"
@@ -365,7 +381,7 @@ easyapache_menu_main(){
     done
 }
 
-easyapache_menu_modify(){ #$easyapache_site_file
+easyapache_menu_modify(){
     clear
     while true
     do
@@ -404,43 +420,48 @@ easyapache_menu_modify(){ #$easyapache_site_file
                 if [ "$easyapache_site_new_file" == "c" ] || [ "$easyapache_site_new_file" == "C" ]
                 then
                     easyapache_menu_modify "$easyapache_site_file"
-                elif [[ "$easyapache_site_new_file" != *.conf ]]
-                then
-                    easyapache_site_new_file="$easyapache_site_new_file.conf"
+                else
+                    if [[ "$easyapache_site_new_file" != *.conf ]]
+                    then
+                        easyapache_site_new_file="$easyapache_site_new_file.conf"
+                    fi
+                    clear
+                    echo " "
+                    easyapache_site_modify_file "$easyapache_site_new_file"
                 fi
-                clear
-                echo " "
-                easyapache_site_modify_file "$easyapache_site_new_file"
                 ;;
             2)
                 read -p "$(echo -e "${LCYAN}Enter new Files Directory (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_new_DocumentRoot
                 if [ "$easyapache_site_new_DocumentRoot" == "c" ] || [ "$easyapache_site_new_DocumentRoot" == "C" ]
                 then
                     easyapache_menu_modify "$easyapache_site_file"
+                else
+                    clear
+                    echo " "
+                    easyapache_site_modify_DocumentRoot "$easyapache_site_new_DocumentRoot"
                 fi
-                clear
-                echo " "
-                easyapache_site_modify_DocumentRoot "$easyapache_site_new_DocumentRoot"
                 ;;
             3)
                 read -p "$(echo -e "${LCYAN}Enter new URL (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_new_ServerName
                 if [ "$easyapache_site_new_ServerName" == "c" ] || [ "$easyapache_site_new_ServerName" == "C" ]
                 then
                     easyapache_menu_modify "$easyapache_site_file"
+                else
+                    clear
+                    echo " "
+                    easyapache_site_modify_ServerName "$easyapache_site_new_ServerName"
                 fi
-                clear
-                echo " "
-                easyapache_site_modify_ServerName "$easyapache_site_new_ServerName"
                 ;;
             4)
                 read -p "$(echo -e "${LCYAN}Enter new Alias (${LYELLOW}/ included${LCYAN})(${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_new_Alias
                 if [ "$easyapache_site_new_Alias" == "c" ] || [ "$easyapache_site_new_Alias" == "C" ]
                 then
                     easyapache_menu_modify "$easyapache_site_file"
+                else
+                    clear
+                    echo " "
+                    easyapache_site_modify_Alias "$easyapache_site_new_Alias"
                 fi
-                clear
-                echo " "
-                easyapache_site_modify_Alias "$easyapache_site_new_Alias"
                 ;;
             5)
                 if [ "$bin" == "true" ]
@@ -449,10 +470,11 @@ easyapache_menu_modify(){ #$easyapache_site_file
                     if [ "$easyapache_site_new_SSLCertificateFile" == "c" ] || [ "$easyapache_site_new_SSLCertificateFile" == "C" ]
                     then
                         easyapache_menu_modify "$easyapache_site_file"
+                    else
+                        clear
+                        echo " "
+                        easyapache_site_modify_SSLCertificateFile "$easyapache_site_new_SSLCertificateFile"
                     fi
-                    clear
-                    echo " "
-                    easyapache_site_modify_SSLCertificateFile "$easyapache_site_new_SSLCertificateFile"
                 else
                     clear
                     echo " "
@@ -466,10 +488,11 @@ easyapache_menu_modify(){ #$easyapache_site_file
                     if [ "$easyapache_site_new_SSLCertificateKeyFile" == "c" ] || [ "$easyapache_site_new_SSLCertificateKeyFile" == "C" ]
                     then
                         easyapache_menu_modify "$easyapache_site_file"
+                    else
+                        clear
+                        echo " "
+                        easyapache_site_modify_SSLCertificateKeyFile "$easyapache_site_new_SSLCertificateKeyFile"
                     fi
-                    clear
-                    echo " "
-                    easyapache_site_modify_SSLCertificateKeyFile "$easyapache_site_new_SSLCertificateKeyFile"
                 else
                     clear
                     echo " "
