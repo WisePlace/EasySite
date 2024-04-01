@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-version=0.18
+easysite_version=0.18
 author="WisePlace"
 
 easysite_etc="/etc/EasySite"
@@ -15,9 +15,7 @@ easysite_bin="$easysite_etc/bin"
 easysite_templates="$easysite_etc/templates"
 easysite_env="$easysite_etc/EasySite_env"
 
-modules_source="https://web.luka-laurent.fr/EasySite/modules"
-templates_source="https://web.luka-laurent.fr/EasySite/templates"
-env_source="https://web.luka-laurent.fr/EasySite/bin/EasySite_env"
+main_source="https://web.luka-laurent.fr/EasySite"
 
 IP=$(hostname -I)
 local_mysql="None"
@@ -111,18 +109,54 @@ easysite_check(){
     if [ -d "$easysite_etc" ]
     then
         echo -e "${LCYAN}EasySite already installed.${RESET}"
+	echo -e "${LMAGENTA}Checking for updates..${RESET}"
+        wget -qO "$easysite_bin/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1
+	wget -qO "$easysite_bin/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1
+        wget -qO "$easysite_bin/EasySite.sh" "$main_source/EasySite.sh" >/dev/null 2>&1
+	easymysql_latest_version=$(awk -F 'easymysql_version=' '/easymysql_version/{print $2;exit}' $easysite_bin/EasyMySQL.sh | awk -F "'" '{print $1}')
+        easyapache_latest_version=$(awk -F 'easyapache_version=' '/easyapache_version/{print $2;exit}' $easysite_bin/EasyApache.sh | awk -F "'" '{print $1}')
+        easysite_latest_version=$(awk -F 'easysite_version=' '/easysite_version/{print $2;exit}' $easysite_bin/EasySite.sh | awk -F "'" '{print $1}')
+	easymysql_version=$(EasySite mysql version-raw)
+        easyapache_version=$(EasySite apache version-raw)
+	easysite_version=$(EasySite version-raw)
+	rm "$easysite_bin/EasyMySQL.sh"
+        rm "$easysite_bin/EasyApache.sh"
+	rm "$easysite_bin/EasySite.sh"
+        if (( $(echo "$easymysql_version < $easymysql_latest_version" | bc -l) ))
+	then
+            rm "$easysite_modules/EasyMySQL.sh"
+            wget -O "$easysite_modules/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyMySQL update.${RESET}"; exit 1; }
+	    chmod +x "$easysite_modules/EasyMySQL.sh"
+	    echo -e "${LGREEN}EasyMySQL module successfully updated from ${LYELLOW}V$easymysql_version ${LGREEN}to ${LYELLOW}V$easymysql_latest_version${LGREEN}.${RESET}"
+	fi
+        if (( $(echo "$easyapache_version < $easyapache_latest_version" | bc -l) ))
+	then
+            rm "$easysite_modules/EasyApache.sh"
+            wget -O "$easysite_modules/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyApache update.${RESET}"; exit 1; }
+	    chmod +x "$easysite_modules/EasyApache.sh"
+	    echo -e "${LGREEN}EasyApache module successfully updated from ${LYELLOW}V$easyapache_version ${LGREEN}to ${LYELLOW}V$easyapache_latest_version${LGREEN}.${RESET}"
+	fi
+        if (( $(echo "$easysite_version < $easysite_latest_version" | bc -l) ))
+	then
+            rm "$easysite_etc/EasySite.sh"
+            wget -O "$easysite_etc/EasySite.sh" "$main_source/EasySite.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasySite update.${RESET}"; exit 1; }
+	    chmod +x "$easysite_etc/EasySite.sh"
+	    echo -e "${LGREEN}EasySite successfully updated from ${LYELLOW}V$easysite_version ${LGREEN}to ${LYELLOW}V$easysite_latest_version${LGREEN}.${RESET}"
+            cp -f "$easysite_etc/EasySite.sh" "$0"
+	fi
+        echo -e "${LCYAN}Up to Date.${RESET}"
     else
         echo -e "${YELLOW}EasySite not installed.${RESET}"
         echo -e "${LMAGENTA}Installing EasySite..${RESET}"
         mkdir -p "$easysite_modules" "$easysite_bin" "$easysite_templates"
         touch "$easysite_conf"
         echo "local_mysql=$local_mysql" >> "$easysite_conf"
-	wget -O "$easysite_etc/EasySite_env" "$env_source" >/dev/null 2>&1
-        cp -f "$0" "$easysite_modules/EasySite.sh"
-        ln -f -s "$easysite_modules/EasySite.sh" "/usr/local/bin/EasySite"
-        wget -O "$easysite_modules/EasyMySQL.sh" "$modules_source/EasyMySQL.sh" >/dev/null 2>&1
+	wget -O "$easysite_etc/EasySite_env" "$main_source/bin/EasySite_env" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasySite environment variables.${RESET}"; exit 1; }
+        cp -f "$0" "$easysite_etc/EasySite.sh"
+        ln -f -s "$easysite_etc/EasySite.sh" "/usr/local/bin/EasySite"
+        wget -O "$easysite_modules/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyMySQL module.${RESET}"; exit 1; }
         chmod +x "$easysite_modules/EasyMySQL.sh"
-        wget -O "$easysite_modules/EasyApache.sh" "$modules_source/EasyApache.sh" >/dev/null 2>&1
+        wget -O "$easysite_modules/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyApache module.${RESET}"; exit 1; }
         chmod +x "$easysite_modules/EasyApache.sh"
         echo -e "${LGREEN}EasySite successfully installed.${RESET}"
     fi
@@ -178,11 +212,11 @@ then
     exit 0
 elif [ "$1" == "version" ] || [ "$1" == "-v" ] || [ "$1" == "--v" ] || [ "$1" == "--version" ]
 then
-    echo -e "${LCYAN}EasySite ${LBLUE}V$version${RESET}"
+    echo -e "${LCYAN}EasySite ${LBLUE}V$easysite_version${RESET}"
     exit 0
 elif [ "$1" == "version-raw" ]
 then
-    echo "$version"
+    echo "$easysite_version"
     exit 0
 else
     echo -e "${RED}Unknown argument: ${LRED}Do ${MAGENTA}EasySite help ${LRED}for more informations.${RESET}"
