@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easysite_version=0.18
+easysite_version=0.22
 author="WisePlace"
 
 easysite_etc="/etc/EasySite"
