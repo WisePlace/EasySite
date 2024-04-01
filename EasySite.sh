@@ -191,11 +191,61 @@ then
     exit 0
 elif [ "$1" == "apache" ] || [ "$1" == "APACHE" ] || [ "$1" == "Apache" ] || [ "$1" == "apache2" ] || [ "$1" == "APACHE2" ] || [ "$1" == "Apache2" ]
 then
-    $easysite_modules/EasyApache.sh
+    if [ "$2" == "" ] || [ "$2" == " " ]
+    then
+        $easysite_modules/EasyApache.sh
+    else
+        if [ "$3" == "" ] || [ "$3" == " " ]
+	then
+            $easysite_modules/EasyApache.sh $2
+        else
+            if [ "$4" == "" ] || [ "$4" == " " ]
+	    then
+                $easysite_modules/EasyApache.sh $2 $3
+            else
+	        if [ "$5" == "" ] || [ "$5" == " " ]
+	        then
+                    $easysite_modules/EasyApache.sh $2 $3 $4
+                else
+	            if [ "$6" == "" ] || [ "$6" == " " ]
+	            then
+                        $easysite_modules/EasyApache.sh $2 $3 $4 $5
+                    else
+		        $easysite_modules/EasyApache.sh $2 $3 $4 $5 $6
+	            fi
+                fi
+	    fi
+	fi
+    fi
     exit 0
 elif [ "$1" == "mysql" ] || [ "$1" == "MySQL" ] || [ "$1" == "Mysql" ] || [ "$1" == "mySQL" ] || [ "$1" == "MYSQL" ]
 then
-    $easysite_modules/EasyMySQL.sh
+    if [ "$2" == "" ] || [ "$2" == " " ]
+    then
+        $easysite_modules/EasyMySQL.sh
+    else
+        if [ "$3" == "" ] || [ "$3" == " " ]
+	then
+            $easysite_modules/EasyMySQL.sh $2
+        else
+            if [ "$4" == "" ] || [ "$4" == " " ]
+	    then
+                $easysite_modules/EasyMySQL.sh $2 $3
+            else
+	        if [ "$5" == "" ] || [ "$5" == " " ]
+	        then
+                    $easysite_modules/EasyMySQL.sh $2 $3 $4
+                else
+	            if [ "$6" == "" ] || [ "$6" == " " ]
+	            then
+                        $easysite_modules/EasyMySQL.sh $2 $3 $4 $5
+                    else
+		        $easysite_modules/EasyMySQL.sh $2 $3 $4 $5 $6
+	            fi
+                fi
+	    fi
+	fi
+    fi
     exit 0
 elif [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--h" ] || [ "$1" == "--help" ]
 then
