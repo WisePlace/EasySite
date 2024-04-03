@@ -110,9 +110,9 @@ easysite_check(){
     then
         echo -e "${LCYAN}EasySite already installed.${RESET}"
 	echo -e "${LMAGENTA}Checking for updates..${RESET}"
-        wget -qO "$easysite_bin/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1
-	wget -qO "$easysite_bin/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1
-        wget -qO "$easysite_bin/EasySite.sh" "$main_source/EasySite.sh" >/dev/null 2>&1
+        wget --no-check-certificate -qO "$easysite_bin/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1
+	wget --no-check-certificate -qO "$easysite_bin/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1
+        wget --no-check-certificate -qO "$easysite_bin/EasySite.sh" "$main_source/EasySite.sh" >/dev/null 2>&1
 	easymysql_latest_version=$(awk -F 'easymysql_version=' '/easymysql_version/{print $2;exit}' $easysite_bin/EasyMySQL.sh | awk -F "'" '{print $1}')
         easyapache_latest_version=$(awk -F 'easyapache_version=' '/easyapache_version/{print $2;exit}' $easysite_bin/EasyApache.sh | awk -F "'" '{print $1}')
         easysite_latest_version=$(awk -F 'easysite_version=' '/easysite_version/{print $2;exit}' $easysite_bin/EasySite.sh | awk -F "'" '{print $1}')
@@ -125,21 +125,21 @@ easysite_check(){
         if (( $(echo "$easymysql_version < $easymysql_latest_version" | bc -l) ))
 	then
             rm "$easysite_modules/EasyMySQL.sh"
-            wget -O "$easysite_modules/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyMySQL update.${RESET}"; exit 1; }
+            wget --no-check-certificate -O "$easysite_modules/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyMySQL update.${RESET}"; exit 1; }
 	    chmod +x "$easysite_modules/EasyMySQL.sh"
 	    echo -e "${LGREEN}EasyMySQL module successfully updated from ${LYELLOW}V$easymysql_version ${LGREEN}to ${LYELLOW}V$easymysql_latest_version${LGREEN}.${RESET}"
 	fi
         if (( $(echo "$easyapache_version < $easyapache_latest_version" | bc -l) ))
 	then
             rm "$easysite_modules/EasyApache.sh"
-            wget -O "$easysite_modules/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyApache update.${RESET}"; exit 1; }
+            wget --no-check-certificate -O "$easysite_modules/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyApache update.${RESET}"; exit 1; }
 	    chmod +x "$easysite_modules/EasyApache.sh"
 	    echo -e "${LGREEN}EasyApache module successfully updated from ${LYELLOW}V$easyapache_version ${LGREEN}to ${LYELLOW}V$easyapache_latest_version${LGREEN}.${RESET}"
 	fi
         if (( $(echo "$easysite_version < $easysite_latest_version" | bc -l) ))
 	then
             rm "$easysite_etc/EasySite.sh"
-            wget -O "$easysite_etc/EasySite.sh" "$main_source/EasySite.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasySite update.${RESET}"; exit 1; }
+            wget --no-check-certificate -O "$easysite_etc/EasySite.sh" "$main_source/EasySite.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasySite update.${RESET}"; exit 1; }
 	    chmod +x "$easysite_etc/EasySite.sh"
 	    echo -e "${LGREEN}EasySite successfully updated from ${LYELLOW}V$easysite_version ${LGREEN}to ${LYELLOW}V$easysite_latest_version${LGREEN}.${RESET}"
             cp -f "$easysite_etc/EasySite.sh" "$0"
@@ -151,12 +151,12 @@ easysite_check(){
         mkdir -p "$easysite_modules" "$easysite_bin" "$easysite_templates"
         touch "$easysite_conf"
         echo "local_mysql=$local_mysql" >> "$easysite_conf"
-	wget -O "$easysite_etc/EasySite_env" "$main_source/bin/EasySite_env" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasySite environment variables.${RESET}"; exit 1; }
+	wget --no-check-certificate -O "$easysite_etc/EasySite_env" "$main_source/bin/EasySite_env" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasySite environment variables.${RESET}"; exit 1; }
         cp -f "$0" "$easysite_etc/EasySite.sh"
         ln -f -s "$easysite_etc/EasySite.sh" "/usr/local/bin/EasySite"
-        wget -O "$easysite_modules/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyMySQL module.${RESET}"; exit 1; }
+        wget --no-check-certificate -O "$easysite_modules/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyMySQL module.${RESET}"; exit 1; }
         chmod +x "$easysite_modules/EasyMySQL.sh"
-        wget -O "$easysite_modules/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyApache module.${RESET}"; exit 1; }
+        wget --no-check-certificate -O "$easysite_modules/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyApache module.${RESET}"; exit 1; }
         chmod +x "$easysite_modules/EasyApache.sh"
         echo -e "${LGREEN}EasySite successfully installed.${RESET}"
     fi
