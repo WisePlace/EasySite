@@ -426,10 +426,11 @@ easyapache_menu_modify(){
         if [ "$easyapache_site_SSLEngine" == "on" ] || [ "$easyapache_site_SSLEngine" == "On" ] || [ "$easyapache_site_SSLEngine" == "ON" ]
         then
             bin="true"
-            echo -e "${LYELLOW}5. SSL Certificate Path${RESET}"
-            echo -e "${LYELLOW}6. SSL Key Path${RESET}"
-            echo -e "${LYELLOW}7. Open in File Editor${RESET}"
-            echo -e "${YELLOW}8. Back${RESET}"
+            echo -e "${LYELLOW}5. Disable SSL${RESET}"
+            echo -e "${LYELLOW}6. SSL Certificate Path${RESET}"
+            echo -e "${LYELLOW}7. SSL Key Path${RESET}"
+            echo -e "${LYELLOW}8. Open in File Editor${RESET}"
+            echo -e "${YELLOW}9. Back${RESET}"
         else
             bin="false"
             echo -e "${LYELLOW}5. Enable SSL${RESET}"
@@ -439,7 +440,7 @@ easyapache_menu_modify(){
         echo " "
         if [ "$bin" == "true" ]
         then
-            read -p "$(echo -e "${LCYAN}Select an option to modify(1-8):${RESET} ")" easyapache_menu_modify_choice
+            read -p "$(echo -e "${LCYAN}Select an option to modify(1-9):${RESET} ")" easyapache_menu_modify_choice
         else
             read -p "$(echo -e "${LCYAN}Select an option to modify(1-7):${RESET} ")" easyapache_menu_modify_choice
         fi
@@ -509,6 +510,18 @@ easyapache_menu_modify(){
             5)
                 if [ "$bin" == "true" ]
                 then
+                    clear
+                    echo " "
+                    easyapache_site_SSL_disable "$easyapache_site_file"
+                else
+                    clear
+                    echo " "
+                    easyapache_site_SSL_enable "$easyapache_site_file"
+                fi
+                ;;
+            6)
+                if [ "$bin" == "true" ]
+                then              
                     read -p "$(echo -e "${LCYAN}Enter new SSL Certificate Path (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_new_SSLCertificateFile
                     if [ "$easyapache_site_new_SSLCertificateFile" == "c" ] || [ "$easyapache_site_new_SSLCertificateFile" == "C" ]
                     then
@@ -521,10 +534,10 @@ easyapache_menu_modify(){
                 else
                     clear
                     echo " "
-                    easyapache_site_enable_SSL "$easyapache_site_file"
+                    nano "$apache_av_dir/$easyapache_site_file"
                 fi
                 ;;
-            6)
+            7)
                 if [ "$bin" == "true" ]
                 then
                     read -p "$(echo -e "${LCYAN}Enter new SSL Key Path (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" easyapache_site_new_SSLCertificateKeyFile
@@ -537,22 +550,22 @@ easyapache_menu_modify(){
                         easyapache_site_modify_SSLCertificateKeyFile "$easyapache_site_new_SSLCertificateKeyFile"
                     fi
                 else
-                    clear
-                    echo " "
-                    nano "$apache_av_dir/$easyapache_site_file"
+                    easyapache_menu_main
                 fi
                 ;;
-            7)
+            8)
                 if [ "$bin" == "true" ]
                 then
                     clear
                     echo " "
                     nano "$apache_av_dir/$easyapache_site_file"
                 else
-                    easyapache_menu_main
+                    clear
+                    echo " "
+                    echo -e "${BOLD}> ${LRED}Invalid option. Please enter a number from 1 to 7.${RESET}"
                 fi
                 ;;
-            8)
+            9)
                 if [ "$bin" == "true" ]
                 then
                     easyapache_menu_main
@@ -567,7 +580,7 @@ easyapache_menu_modify(){
                 then
                     clear
                     echo " "
-                    echo -e "${BOLD}> ${LRED}Invalid option. Please enter a number from 1 to 8.${RESET}"
+                    echo -e "${BOLD}> ${LRED}Invalid option. Please enter a number from 1 to 9.${RESET}"
                 else
                     clear
                     echo " "
