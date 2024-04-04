@@ -1,4 +1,4 @@
-#!/bin/bash
+/#!/bin/bash
 
 ##############
 #### INIT ####
@@ -68,18 +68,17 @@ apache_check(){
             systemctl start apache2 >/dev/null 2>&1
             return
         else
-	    sources_lines=$(wc -l < "$sources_list")
-	    if [ "$sources_lines" -le 1 ]
+	    sources_lines=$(wc -l < "/etc/apt/sources.list")
+	    if [ "$sources_lines" == "1" ]
             then
 	        echo -e "${RED}Failed to install Apache2: ${LRED}Your debian sources seems wrong.${RESET}"
 	        read -p "$(echo -e "${BLUE}Do you want to repear them using WisePlace tools ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" choice
 	        if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
 	        then
 	            echo -e "${LYELLOW}Getting linux sources tool..${RESET}"
-	            wget --no-check-certificate -qO "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1
-	            chmod +x linux_sources.sh >/dev/null 2>&1
-	            . linux_sources.sh
-	            rm linux_sources.sh
+	            wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1
+	            chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
+	            . /etc/apt/linux_sources.sh
 	            . EasySite.sh
 	        else
 	            exit 1
