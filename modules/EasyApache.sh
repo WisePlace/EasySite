@@ -146,7 +146,11 @@ easyapache_site_show(){
 }
 
 
-easyapache_site_enable_SSL(){
+easyapache_site_SSL_enable(){
+    echo "> Not implemented yet."
+}
+
+easyapache_site_SSL_disable(){
     echo "> Not implemented yet."
 }
 
