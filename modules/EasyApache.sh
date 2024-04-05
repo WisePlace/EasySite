@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easyapache_version=0.99
+easyapache_version=1.01
 easyapache_author="WisePlace"
 
 . /etc/EasySite/EasySite_env
@@ -202,6 +202,8 @@ easyapache_site_SSL_enable(){
         then
  	    clear
             echo " "
+	    bin="true"
+            easyapache_site_SSLEngine="on"
 	    echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
         else
 	    echo -e "${BOLD}> ${RED}Failed to generate SSL certificate/key: ${LRED}$output${RESET}"
@@ -225,8 +227,9 @@ easyapache_site_SSL_enable(){
             then
 	        clear
                 echo " "
+		bin="true"
+                easyapache_site_SSLEngine="on"
 	        echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
-                bin="true"
             else
 	        clear
                 echo " "
@@ -250,8 +253,9 @@ easyapache_site_SSL_disable(){
     then
 	clear
         echo " "
+	bin="false"
+	easyapache_site_SSLEngine=""
 	echo -e "${BOLD}> ${LGREEN}SSL has been removed successfully.${RESET}"
-        bin="false"
     else
 	clear
         echo " "
