@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easyapache_version=0.94
+easyapache_version=0.95
 easyapache_author="WisePlace"
 
 . /etc/EasySite/EasySite_env
@@ -194,11 +194,32 @@ easyapache_site_show(){
 
 
 easyapache_site_SSL_enable(){
-    echo "> Not implemented yet."
+    if [ "$2" == "1" ]
+    then
+        echo "Not implemented yet."
+    elif [ "$2" == "2" ]
+    then
+        openssl req -x509 -newkey rsa:2048 -keyout /etc/ssl/certs/$1_key.pem -out /etc/ssl/certs/$1_cert.pem -days 365
+	sed -i 's/<VirtualHost \*:80>/<VirtualHost *:443>/' $test
+        sed -i '1i\ ' $test
+        sed -i '1i\<VirtualHost/>' $test
+        sed -i "1i\        Redirect permanent / https://$easyapache_site_ServerName/" $test
+        sed -i '1i\<VirtualHost *:80>' $test
+        sed -i "/CustomLog/a\        SSLCertificateKeyFile /etc/ssl/certs/$1_key.pem" $test
+        sed -i "/CustomLog/a\        SSLCertificateFile /etc/ssl/certs/$1_cert.pem" $test
+        sed -i "/CustomLog/a\        SSLEngine on" $test
+        sed -i "/CustomLog/a\ " $test
+	if output=$(systemctl reload apache2 2>&1)
+        then
+	    echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
+        else
+	    echo -e "${BOLD}> ${RED}Failed to enable SSL: ${LRED}$output${RESET}"
+        fi
+    fi
 }
 
 easyapache_site_SSL_disable(){
-    echo "> Not implemented yet."
+    echo "test"
 }
 
 easyapache_site_modify_file(){
@@ -561,13 +582,28 @@ easyapache_menu_modify(){
             5)
                 if [ "$bin" == "true" ]
                 then
-                    clear
-                    echo " "
-                    easyapache_site_SSL_disable "$easyapache_site_file"
+		    read -p "$(echo -e "${LCYAN}The path to your current certificate/key will be removed, are you sure ? ${LYELLOW}[Y/n]${LCYAN}:${RESET} ")" choice
+                    if [ "$choice" == "Y" ] || [ "$choice" == "y" ]
+		    then
+                        clear
+                        echo " "
+                        easyapache_site_SSL_disable "$easyapache_site_file"
+		    fi
                 else
-                    clear
-                    echo " "
-                    easyapache_site_SSL_enable "$easyapache_site_file"
+		    echo "1. Let's encrypt (domain name required)"
+                    echo "2. OpenSSL (non trusted HTTPS)"
+		    read -p "$(echo -e "${LCYAN}Choose an SSL solution (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" choice
+                    if [ "$choice" == "1" ]
+		    then
+                        clear
+			echo " "
+                        easyapache_site_SSL_enable "$easyapache_site_file" 1
+		    elif [ "$choice" == "2" ]
+		    then
+                        clear
+			echo " "
+                        easyapache_site_SSL_enable "$easyapache_site_file" 2
+		    fi
                 fi
                 ;;
             6)
