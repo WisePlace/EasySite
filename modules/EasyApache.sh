@@ -22,7 +22,7 @@ easyapache_check(){
         if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
         then
             echo -e "${LMAGENTA}Installing Apache2..${RESET}"
-            if output=$(apt install apache2 php -y >/dev/null 2>&1)
+            if output=$(sudo apt install apache2 php -y >/dev/null 2>&1)
             then
                 echo -e "${LGREEN}Apache2 successfully installed.${RESET}"
                 systemctl enable apache2 >/dev/null 2>&1
@@ -38,7 +38,7 @@ easyapache_check(){
 	                then
 	                    echo -e "${LYELLOW}Getting Linux sources tool..${RESET}"
 	                    wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading linux sources tool.${RESET}"; exit 1; }
-	                    chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
+	                    sudo chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
 	                    . /etc/apt/linux_sources.sh
 	                    . EasySite.sh
 	                else
@@ -200,6 +200,7 @@ easyapache_site_SSL_enable(){
     elif [ "$2" == "2" ]
     then
         sudo a2enmod ssl >/dev/null 2>&1
+	sudo apt install openssl >/dev/null 2>&1
         openssl req -x509 -newkey rsa:2048 -keyout /etc/ssl/certs/$1_key.pem -out /etc/ssl/certs/$1_cert.pem -days 365
 	sed -i 's/<VirtualHost \*:80>/<VirtualHost *:443>/' "$apache_av_dir/$1" 2>&1
         sed -i '1i\ ' "$apache_av_dir/$1" 2>&1
@@ -212,16 +213,35 @@ easyapache_site_SSL_enable(){
         sed -i "/CustomLog/a\ " "$apache_av_dir/$1" 2>&1
 	if output=$(sudo systemctl reload apache2 2>&1)
         then
+	    clear
+            echo " "
 	    echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
             bin="true"
         else
+	    clear
+            echo " "
 	    echo -e "${BOLD}> ${RED}Failed to enable SSL: ${LRED}$output${RESET}"
         fi
     fi
 }
 
 easyapache_site_SSL_disable(){
-    echo "test"
+    sed -i '/<VirtualHost \*:80>/,/<\/VirtualHost>/d' "$apache_av_dir/$1" 2>&1
+    sed -i '1{/^[[:space:]]*$/d}' "$apache_av_dir/$1" 2>&1
+    sed -i 's/<VirtualHost \*:443>/<VirtualHost *:80>/' "$apache_av_dir/$1" 2>&1
+    sed -i '/^ *$/N;/\n *SSLEngine/d' "$apache_av_dir/$1" 2>&1
+    sed -i '/SSLCertificate/d' "$apache_av_dir/$1" 2>&1
+    if output=$(sudo systemctl reload apache2 2>&1)
+    then
+	clear
+        echo " "
+	echo -e "${BOLD}> ${LGREEN}SSL has been removed successfully.${RESET}"
+        bin="false"
+    else
+	clear
+        echo " "
+        echo -e "${BOLD}> ${RED}Failed to remove SSL: ${LRED}$output${RESET}"
+    fi
 }
 
 easyapache_site_modify_file(){
@@ -592,8 +612,8 @@ easyapache_menu_modify(){
                         easyapache_site_SSL_disable "$easyapache_site_file"
 		    fi
                 else
-		    echo "1. Let's encrypt (domain name required)"
-                    echo "2. OpenSSL (non trusted HTTPS)"
+		    echo -e "${BLUE}1. Let's Encrypt (domain name required)${RESET}"
+                    echo -e "${BLUE}2. OpenSSL (non trusted HTTPS)${RESET}"
 		    read -p "$(echo -e "${LCYAN}Choose an SSL solution (${LYELLOW}c to cancel${LCYAN}):${RESET} ")" choice
                     if [ "$choice" == "1" ]
 		    then
