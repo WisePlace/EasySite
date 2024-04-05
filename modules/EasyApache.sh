@@ -230,10 +230,12 @@ easyapache_site_SSL_enable(){
             else
 	        clear
                 echo " "
-	        echo -e "${BOLD}> ${RED}Failed to enable SSL: ${LRED}$output${RESET}"
+	        echo -e "${BOLD}> ${RED}Failed to enable SSL. ${LRED}$output${RESET}"
             fi
 	else
-            echo -e "${BOLD}> ${RED}Failed to generate SSL certificate/key: ${LRED}$output${RESET}"
+ 	    clear
+            echo " "
+            echo -e "${BOLD}> ${RED}Failed to generate SSL certificate/key. ${LRED}$output${RESET}"
         fi
     fi
 }
