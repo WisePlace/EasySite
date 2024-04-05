@@ -59,9 +59,9 @@ easysite_check(){
     then
         echo -e "${LCYAN}EasySite already installed.${RESET}"
 	echo -e "${LMAGENTA}Checking for updates..${RESET}"
-        wget --no-check-certificate -qO "$easysite_bin/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1
-	wget --no-check-certificate -qO "$easysite_bin/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1
-        wget --no-check-certificate -qO "$easysite_bin/EasySite.sh" "$main_source/EasySite.sh" >/dev/null 2>&1
+        wget --no-check-certificate -qO "$easysite_bin/EasyMySQL.sh" "$main_source/modules/EasyMySQL.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyMySQL update.${RESET}"; exit 1; }
+	wget --no-check-certificate -qO "$easysite_bin/EasyApache.sh" "$main_source/modules/EasyApache.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasyApache update.${RESET}"; exit 1; }
+        wget --no-check-certificate -qO "$easysite_bin/EasySite.sh" "$main_source/EasySite.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading EasySite update.${RESET}"; exit 1; }
 	easymysql_latest_version=$(awk -F 'easymysql_version=' '/easymysql_version/{print $2;exit}' $easysite_bin/EasyMySQL.sh | awk -F "'" '{print $1}')
         easyapache_latest_version=$(awk -F 'easyapache_version=' '/easyapache_version/{print $2;exit}' $easysite_bin/EasyApache.sh | awk -F "'" '{print $1}')
         easysite_latest_version=$(awk -F 'easysite_version=' '/easysite_version/{print $2;exit}' $easysite_bin/EasySite.sh | awk -F "'" '{print $1}')
