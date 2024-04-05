@@ -393,7 +393,7 @@ easymysql_menu_user(){
                 read -p "$(echo -e "${LCYAN}Enter password:${RESET} ")" easymysql_user_password
                 clear
                 echo " "
-                easymysql_user_create "$easymysql_user_name" "$easymysql_user_host" "$USER_Password"
+                easymysql_user_create "$easymysql_user_name" "$easymysql_user_host" "$easymysql_user_password"
                 ;;
             2)
                 read -p "$(echo -e "${LCYAN}Enter username:${RESET} ")" easymysql_user_name
