@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easyapache_version=1.2
+easyapache_version=1.3
 easyapache_author="WisePlace"
 
 . /etc/EasySite/EasySite_env
@@ -84,13 +84,13 @@ easyapache_site_status_get(){
 
 easyapache_site_status_switch(){
     easyapache_site_name="${1%.conf}"
-    if easysite_file_check "$apache_av_dir/$1"
+    if [ -f "$apache_av_dir/$1" ]
     then
         easyapache_site_status_get "$1"
         if [ "$easyapache_site_status" == "enabled" ]
         then
             sudo a2dissite "$1" >/dev/null 2>&1
-            if easysite_service_reload "apache2"
+            if sudo systemctl reload apache2 >/dev/null 2>&1
             then
                 echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been disabled.${RESET}"
             else
@@ -98,7 +98,7 @@ easyapache_site_status_switch(){
             fi
         else
             sudo a2ensite "$1" >/dev/null 2>&1
-            if easysite_service_reload "apache2"
+            if sudo systemctl reload apache2 >/dev/null 2>&1
             then
                 echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been enabled.${RESET}"
             else
@@ -112,7 +112,7 @@ easyapache_site_status_switch(){
 
 easyapache_site_create(){
     easyapache_site_name="${easyapache_site_file%.conf}"
-    if easysite_file_check "$apache_av_dir/$1"
+    if [ -f "$apache_av_dir/$1" ]
     then
         echo -e "${BOLD}> ${LRED}The site ${LYELLOW}$1 ${LRED}already exists.${RESET}"
     else
@@ -127,9 +127,9 @@ easyapache_site_create(){
         echo '        ErrorLog ${APACHE_LOG_DIR}/html_error.log' >> "$apache_av_dir/$1"
         echo '        CustomLog ${APACHE_LOG_DIR}/html_access.log combined' >> "$apache_av_dir/$1"
         echo "</VirtualHost>" >> "$apache_av_dir/$1"
-        if ! easysite_dir_check "$easyapache_site_DocumentRoot"
+        if [ ! -d "$easyapache_site_DocumentRoot" ]
         then
-            easysite_dir_create "$easyapache_site_DocumentRoot"
+            sudo mkdir "$easyapache_site_DocumentRoot" >/dev/null 2>&1
         fi
         echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been created.${RESET}"
     fi
@@ -138,11 +138,11 @@ easyapache_site_create(){
 easyapache_site_delete(){
     easyapache_site_name="${easyapache_site_file%.conf}"
     easyapache_site_DocumentRoot=$(grep 'DocumentRoot' "$apache_av_dir/$easyapache_site_file" 2>/dev/null | awk '{print $2}')
-    if easysite_file_check "$apache_av_dir/$1"
+    if [ -f "$apache_av_dir/$1" ]
     then
         a2dissite "$1" >/dev/null 2>&1
-        easysite_file_delete "$apache_av_dir/$1"
-        easysite_dir_delete "$easyapache_site_DocumentRoot"
+        sudo rm "$apache_av_dir/$1" >/dev/null 2>&1
+        sudo rmdir "$easyapache_site_DocumentRoot" >/dev/null 2>&1
         echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been deleted.${RESET}"
     else
         echo -e "${BOLD}> ${RED}Failed to delete site: ${LRED}This site doesn't exists.${RESET}"
@@ -164,7 +164,7 @@ easyapache_site_get(){
 }
 
 easyapache_site_show(){
-    if easysite_file_check "$apache_av_dir/$1"
+    if [ -f "$apache_av_dir/$1" ]
     then
         easyapache_site_get "$1"
         echo -e "> ${LMAGENTA}Configuration file: ${YELLOW}$easyapache_site_file${RESET}"
@@ -264,10 +264,10 @@ easyapache_site_SSL_disable(){
 }
 
 easyapache_site_modify_file(){
-    if easysite_file_rename "$apache_av_dir/$easyapache_site_file" "$apache_av_dir/$1"
+    if sudo mv "$apache_av_dir/$easyapache_site_file" "$apache_av_dir/$1" >/dev/null 2>&1
     then
         easyapache_site_file="$1"
-        easysite_service_reload "apache2"
+        sudo systemctl reload apache2 >/dev/null 2>&1
         easyapache_menu_modify "$easyapache_site_file"
     else
         echo -e "${BOLD}> ${LRED}An error occured while renaming the configuration file.${RESET}"
@@ -279,7 +279,7 @@ easyapache_site_modify_DocumentRoot(){
     then
         easyapache_site_DocumentRoot="$1"
         echo -e "${BOLD}> ${LGREEN}The Files Directory has been modified successfully.${RESET}"
-        easysite_service_reload "apache2"
+        sudo systemctl reload apache2 >/dev/null 2>&1
     else
         echo -e "${BOLD}> ${RED}Failed to modify Files Directory: ${LRED}$output${RESET}"
     fi
@@ -290,7 +290,7 @@ easyapache_site_modify_ServerName(){
     then
         easyapache_site_ServerName="$1"
         echo -e "${BOLD}> ${LGREEN}The URL has been modified successfully.${RESET}"
-        easysite_service_reload "apache2"
+        sudo systemctl reload apache2 >/dev/null 2>&1
     else
         echo -e "${BOLD}> ${RED}Failed to modify URL: ${LRED}$output${RESET}"
     fi
@@ -307,7 +307,7 @@ easyapache_site_modify_Alias(){
             then
                 easyapache_site_Alias="$1"
                 echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
-                easysite_service_reload "apache2"
+                sudo systemctl reload apache2 >/dev/null 2>&1
             else
                 echo -e "${BOLD}> ${RED}Failed to modify Alias: ${LRED}$output${RESET}"
             fi
@@ -320,7 +320,7 @@ easyapache_site_modify_Alias(){
                 easyapache_site_Alias=""
                 easyapache_site_AliasDir=""
                 echo -e "${BOLD}> ${LGREEN}The Alias has been removed successfully.${RESET}"
-                easysite_service_reload "apache2"
+                sudo systemctl reload apache2 >/dev/null 2>&1
             else
                 echo -e "${BOLD}> ${RED}Failed to remove Alias: ${LRED}$output${RESET}"
             fi
@@ -329,7 +329,7 @@ easyapache_site_modify_Alias(){
             then
                 easyapache_site_Alias="$1"
                 echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
-                easysite_service_reload "apache2"
+                sudo systemctl reload apache2 >/dev/null 2>&1
             else
                 echo -e "${BOLD}> ${RED}Failed to modify Alias: ${LRED}$output${RESET}"
             fi
@@ -342,7 +342,7 @@ easyapache_site_modify_SSLCertificateFile(){
     then
         easyapache_site_SSLCertificateFile="$1"
         echo -e "${BOLD}> ${LGREEN}The SSL Certificate Path has been modified successfully.${RESET}"
-        easysite_service_reload "apache2"
+        sudo systemctl reload apache2 >/dev/null 2>&1
     else
         echo -e "${BOLD}> ${RED}Failed to modify SSL Certificate Path: ${LRED}$output${RESET}"
     fi
@@ -353,7 +353,7 @@ easyapache_site_modify_SSLCertificateKeyFile(){
     then
         easyapache_site_SSLCertificateKeyFile="$1"
         echo -e "${BOLD}> ${LGREEN}The SSL Key Path has been modified successfully.${RESET}"
-        easysite_service_reload "apache2"
+        sudo systemctl reload apache2 >/dev/null 2>&1
     else
         echo -e "${BOLD}> ${RED}Failed to modify SSL Key Path: ${LRED}$output${RESET}"
     fi
@@ -470,7 +470,7 @@ easyapache_menu_main(){
                     then
                         easyapache_site_file="$easyapache_site_file.conf"
                     fi
-                    if easysite_file_check "$apache_av_dir/$easyapache_site_file"
+                    if [ -f "$apache_av_dir/$easyapache_site_file" ]
                     then
                         easyapache_menu_modify "$easyapache_site_file"
                     else
