@@ -151,17 +151,16 @@ easyapache_site_delete(){
 
 easyapache_site_get(){
     easyapache_site_name="${easyapache_site_file%.conf}"
-    easysite_site="$apache_av_dir/$1"
-    easyapache_site_DocumentRoot=$(grep 'DocumentRoot' "$easysite_site" 2>/dev/null | awk '{print $2}')
-    easyapache_site_ServerName=$(grep 'ServerName' "$easysite_site" 2>/dev/null | awk '{print $2}')
-    easyapache_site_ErrorLog=$(grep 'ErrorLog' "$easysite_site" 2>/dev/null | awk '{print $2}')
-    easyapache_site_CustomLog=$(grep 'CustomLog' "$easysite_site" 2>/dev/null | awk '{print $2}')
-    temp=$(grep -i 'SSLEngine' "$easysite_site")
-    easyapache_site_SSLEngine=$(echo "$temp" 2>/dev/null | cut -d' ' -f2)
-    easyapache_site_SSLCertificateFile=$(grep -i 'SSLCertificateFile' "$easysite_site" 2>/dev/null | awk '{print $2}')
-    easyapache_site_SSLCertificateKeyFile=$(grep -i 'SSLCertificateKeyFile' "$easysite_site" 2>/dev/null | awk '{print $2}')
-    easyapache_site_Alias=$(grep -iE 'Alias\s+(/\S+)' "$easysite_site" 2>/dev/null | awk '{print $2}')
-    easyapache_site_AliasDir=$(grep -iE 'Alias\s+(/\S+)\s+(\S+)' "$easysite_site" 2>/dev/null | awk '{print $3}')
+    easyapache_site_path="$apache_av_dir/$1"
+    easyapache_site_DocumentRoot=$(grep 'DocumentRoot' "$easyapache_site_path" 2>/dev/null | awk '{print $2}')
+    easyapache_site_ServerName=$(grep 'ServerName' "$easyapache_site_path" 2>/dev/null | awk '{print $2}')
+    easyapache_site_ErrorLog=$(grep 'ErrorLog' "$easyapache_site_path" 2>/dev/null | awk '{print $2}')
+    easyapache_site_CustomLog=$(grep 'CustomLog' "$easyapache_site_path" 2>/dev/null | awk '{print $2}')
+    easyapache_site_SSLEngine=$(grep -oP '\b\s*SSLEngine\s*\K\S+' "$easyapache_site_path" 2>/dev/null)
+    easyapache_site_SSLCertificateFile=$(grep -i 'SSLCertificateFile' "$easyapache_site_path" 2>/dev/null | awk '{print $2}')
+    easyapache_site_SSLCertificateKeyFile=$(grep -i 'SSLCertificateKeyFile' "$easyapache_site_path" 2>/dev/null | awk '{print $2}')
+    easyapache_site_Alias=$(grep -iE 'Alias\s+(/\S+)' "$easyapache_site_path" 2>/dev/null | awk '{print $2}')
+    easyapache_site_AliasDir=$(grep -iE 'Alias\s+(/\S+)\s+(\S+)' "$easyapache_site_path" 2>/dev/null | awk '{print $3}')
 }
 
 easyapache_site_show(){
