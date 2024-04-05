@@ -200,15 +200,15 @@ easyapache_site_SSL_enable(){
     elif [ "$2" == "2" ]
     then
         openssl req -x509 -newkey rsa:2048 -keyout /etc/ssl/certs/$1_key.pem -out /etc/ssl/certs/$1_cert.pem -days 365
-	sed -i 's/<VirtualHost \*:80>/<VirtualHost *:443>/' $test
-        sed -i '1i\ ' $test
-        sed -i '1i\<VirtualHost/>' $test
-        sed -i "1i\        Redirect permanent / https://$easyapache_site_ServerName/" $test
-        sed -i '1i\<VirtualHost *:80>' $test
-        sed -i "/CustomLog/a\        SSLCertificateKeyFile /etc/ssl/certs/$1_key.pem" $test
-        sed -i "/CustomLog/a\        SSLCertificateFile /etc/ssl/certs/$1_cert.pem" $test
-        sed -i "/CustomLog/a\        SSLEngine on" $test
-        sed -i "/CustomLog/a\ " $test
+	sed -i 's/<VirtualHost \*:80>/<VirtualHost *:443>/' "$apache_av_dir/$1"
+        sed -i '1i\ ' "$apache_av_dir/$1"
+        sed -i '1i\<VirtualHost/>' "$apache_av_dir/$1"
+        sed -i "1i\        Redirect permanent / https://$easyapache_site_ServerName/" "$apache_av_dir/$1"
+        sed -i '1i\<VirtualHost *:80>' "$apache_av_dir/$1"
+        sed -i "/CustomLog/a\        SSLCertificateKeyFile /etc/ssl/certs/$1_key.pem" "$apache_av_dir/$1"
+        sed -i "/CustomLog/a\        SSLCertificateFile /etc/ssl/certs/$1_cert.pem" "$apache_av_dir/$1"
+        sed -i "/CustomLog/a\        SSLEngine on" "$apache_av_dir/$1"
+        sed -i "/CustomLog/a\ " "$apache_av_dir/$1"
 	if output=$(systemctl reload apache2 2>&1)
         then
 	    echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
