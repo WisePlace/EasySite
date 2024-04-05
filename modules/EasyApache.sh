@@ -196,7 +196,12 @@ easyapache_site_show(){
 easyapache_site_SSL_enable(){
     if [ "$2" == "1" ]
     then
-        echo "Not implemented yet."
+        sudo a2enmod ssl >/dev/null 2>&1
+        sudo apt install certbot python3-certbot-apache >/dev/null 2>&1
+	sudo certbot --apache
+ 	clear
+        echo " "
+	echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
     elif [ "$2" == "2" ]
     then
         sudo a2enmod ssl >/dev/null 2>&1
