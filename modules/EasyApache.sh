@@ -37,7 +37,7 @@ easyapache_check(){
 	                if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
 	                then
 	                    echo -e "${LYELLOW}Getting Linux sources tool..${RESET}"
-	                    wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1
+	                    wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1 || { echo -e "${LRED}Error while downloading linux sources tool.${RESET}"; exit 1; }
 	                    chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
 	                    . /etc/apt/linux_sources.sh
 	                    . EasySite.sh
