@@ -5,12 +5,58 @@
 ##############
 
 ### VARIABLES ###
-easyapache_version=0.92
+easyapache_version=0.94
 easyapache_author="WisePlace"
 
 . /etc/EasySite/EasySite_env
 
 ### FUNCTIONS ###
+
+easyapache_check(){
+    if systemctl status apache2 >/dev/null 2>&1
+    then
+        return 0
+    else
+        echo -e "${YELLOW}Apache2 not installed.${RESET}"
+        read -p "$(echo -e "${BLUE}Do you wish to install Apache2 ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" choice
+        if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
+        then
+            echo -e "${LMAGENTA}Installing Apache2..${RESET}"
+            if output=$(apt install apache2 php -y >/dev/null 2>&1)
+            then
+                echo -e "${LGREEN}Apache2 successfully installed.${RESET}"
+                systemctl enable apache2 >/dev/null 2>&1
+                systemctl start apache2 >/dev/null 2>&1
+                return
+            else
+	            sources_lines=$(wc -l < "/etc/apt/sources.list")
+	            if [ "$sources_lines" == "1" ]
+                then
+	                echo -e "${RED}Failed to install Apache2: ${LRED}Your debian sources seems wrong.${RESET}"
+	                read -p "$(echo -e "${BLUE}Do you want to repear them using WisePlace tools ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" choice
+	                if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
+	                then
+	                    echo -e "${LYELLOW}Getting linux sources tool..${RESET}"
+	                    wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1
+	                    chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
+	                    . /etc/apt/linux_sources.sh
+	                    . EasySite.sh
+	                else
+	                    exit 1
+	                fi
+	            else
+                    echo -e "${RED}Failed to install Apache2: ${LRED}$output${RESET}"
+                    echo -e "${LMAGENTA}Exiting.${RESET}"
+                    exit 1
+	            fi
+            fi
+        else
+            echo -e "${LMAGENTA}Exiting.${RESET}"
+            exit 0
+        fi
+    fi
+}
+
 easyapache_site_list_show(){
     apache_en_list=($(ls "$apache_en_dir"))
     apache_av_list=($(ls "$apache_av_dir"))
@@ -627,4 +673,5 @@ else
 fi
 
 ### GLOBAL ###
+easyapache_check
 easyapache_menu_main
