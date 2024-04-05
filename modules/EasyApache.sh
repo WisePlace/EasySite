@@ -196,7 +196,7 @@ easyapache_site_SSL_enable(){
     if [ "$2" == "1" ]
     then
         sudo a2enmod ssl >/dev/null 2>&1
-        sudo apt install certbot python3-certbot-apache >/dev/null 2>&1
+        sudo apt install certbot python3-certbot-apache -y >/dev/null 2>&1
 	if output=$(sudo certbot --apache)
         then
  	    clear
