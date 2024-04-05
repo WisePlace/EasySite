@@ -15,7 +15,7 @@ easysite_bin="$easysite_etc/bin"
 easysite_templates="$easysite_etc/templates"
 easysite_env="$easysite_etc/EasySite_env"
 
-main_source="https://web.luka-laurent.fr/EasySite"
+main_source="https://raw.githubusercontent.com/WisePlace/EasySite/main"
 
 IP=$(hostname -I)
 local_mysql="None"
@@ -51,91 +51,6 @@ os_check(){
         echo -e "${RED}OS is not compatible.${RESET}"
         echo -e "${MAGENTA}Exiting..${RESET}"
         exit 1
-    fi
-}
-
-apache_check(){
-    if systemctl status apache2 >/dev/null 2>&1
-    then
-        echo -e "${LCYAN}Apache2 already installed.${RESET}"
-    else
-        echo -e "${YELLOW}Apache2 not installed.${RESET}"
-        echo -e "${LMAGENTA}Installing Apache2..${RESET}"
-        if output=$(apt install apache2 php -y >/dev/null 2>&1)
-        then
-            echo -e "${LGREEN}Apache2 successfully installed.${RESET}"
-            systemctl enable apache2 >/dev/null 2>&1
-            systemctl start apache2 >/dev/null 2>&1
-            return
-        else
-	    sources_lines=$(wc -l < "/etc/apt/sources.list")
-	    if [ "$sources_lines" == "1" ]
-            then
-	        echo -e "${RED}Failed to install Apache2: ${LRED}Your debian sources seems wrong.${RESET}"
-	        read -p "$(echo -e "${BLUE}Do you want to repear them using WisePlace tools ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" choice
-	        if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
-	        then
-	            echo -e "${LYELLOW}Getting linux sources tool..${RESET}"
-	            wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1
-	            chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
-	            . /etc/apt/linux_sources.sh
-	            . EasySite.sh
-	        else
-	            exit 1
-	        fi
-	    else
-                echo -e "${RED}Failed to install Apache2: ${LRED}$output${RESET}"
-                exit 1
-	    fi
-        fi
-    fi
-}
-
-mysql_check(){
-    if [ "$local_mysql" == "True" ] || [ "$local_mysql" == "None" ]
-    then
-        if systemctl status mysql >/dev/null 2>&1
-        then
-            echo -e "${LCYAN}MariaDB already installed.${RESET}"
-        else
-            echo -e "${YELLOW}MariaDB not installed.${RESET}"
-            read -p "$(echo -e "${BLUE}Do you wish to install MariaDB ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" mysql_check_choice
-            if [ "$mysql_check_choice" == "Y" ] || [ "$mysql_check_choice" == "y" ] || [ "$mysql_check_choice" == "" ]
-            then
-                local_mysql="True"
-                echo -e "${LMAGENTA}Installing MariaDB..${RESET}"
-                if output=$(apt install mariadb-server -y >/dev/null 2>&1)
-                then
-                    echo -e "${LGREEN}MariaDB successfully installed.${RESET}"
-                    systemctl enable mariadb >/dev/null 2>&1
-                    systemctl start mariadb >/dev/null 2>&1
-                    return
-                else
-	            sources_lines=$(wc -l < "/etc/apt/sources.list")
-	            if [ "$sources_lines" == "1" ]
-                    then
-	                echo -e "${RED}Failed to install MariaDB: ${LRED}Your debian sources seems wrong.${RESET}"
-	                read -p "$(echo -e "${BLUE}Do you want to repear them using WisePlace tools ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" choice
-	                if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
-	                then
-	                echo -e "${LYELLOW}Getting linux sources tool..${RESET}"
-	                wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1
-	                    chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
-	                    . /etc/apt/linux_sources.sh
-	                    . EasySite.sh
-	                else
-	                    exit 1
-	                fi
-	            else
-                        echo -e "${RED}Failed to install MariaDB: ${LRED}$output${RESET}"
-                        exit 1
-	            fi
-                fi
-            else
-                local_mysql="False"
-                return
-            fi
-        fi
     fi
 }
 
@@ -311,6 +226,4 @@ fi
 . "$easysite_conf" >/dev/null 2>&1
 
 os_check
-apache_check
-mysql_check
 easysite_check
