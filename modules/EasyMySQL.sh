@@ -242,7 +242,7 @@ easymysql_session_check(){
 easymysql_menu_connection(){
     read -p "$(echo -e "${LCYAN}MySQL Server (Default: ${LYELLOW}localhost${LCYAN}):${RESET} ")" easymysql_host
     read -p "$(echo -e "${LCYAN}Username (Default: ${LYELLOW}root${LCYAN}):${RESET} ")" easymysql_user
-    echo -e "${LCYAN}Password:${RESET} " 
+    echo -n -e "${LCYAN}Password:${RESET} " 
     easymysql_password=""
     local char
     while IFS= read -r -s -n1 char
