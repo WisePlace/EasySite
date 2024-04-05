@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easysite_version=0.23
+easysite_version=0.26
 easysite_author="WisePlace"
 
 easysite_etc="/etc/EasySite"
@@ -123,105 +123,104 @@ then
 fi
 
 ### OPTIONS ###
-if [ "$1" == "" ] || [ "$1" == " " ]
+if [ "$1" != "" ] & [ "$1" != " " ]
 then
-    bin="True"
-elif [ "$1" == "remove" ]
-then
-    if [ -d "$easysite_etc" ]
+    if [ "$1" == "remove" ]
     then
-        rm -r "$easysite_etc"
-        rm -r "/usr/local/bin/EasySite"
-        echo -e "${LMAGENTA}Uninstalling EasySite..${RESET}"
-        echo -e "${BLUE}EasySite successfully removed.${RESET}"
-    else
-        echo -e "${LCYAN}EasySite is currently not installed.${RESET}"
-    fi
-    exit 0
-elif [ "$1" == "apache" ] || [ "$1" == "APACHE" ] || [ "$1" == "Apache" ] || [ "$1" == "apache2" ] || [ "$1" == "APACHE2" ] || [ "$1" == "Apache2" ]
-then
-    if [ "$2" == "" ] || [ "$2" == " " ]
-    then
-        $easysite_modules/EasyApache.sh
-    else
-        if [ "$3" == "" ] || [ "$3" == " " ]
-	then
-            $easysite_modules/EasyApache.sh $2
+        if [ -d "$easysite_etc" ]
+        then
+            rm -r "$easysite_etc"
+            rm -r "/usr/local/bin/EasySite"
+            echo -e "${LMAGENTA}Uninstalling EasySite..${RESET}"
+            echo -e "${BLUE}EasySite successfully removed.${RESET}"
         else
-            if [ "$4" == "" ] || [ "$4" == " " ]
-	    then
-                $easysite_modules/EasyApache.sh $2 $3
-            else
-	        if [ "$5" == "" ] || [ "$5" == " " ]
-	        then
-                    $easysite_modules/EasyApache.sh $2 $3 $4
-                else
-	            if [ "$6" == "" ] || [ "$6" == " " ]
-	            then
-                        $easysite_modules/EasyApache.sh $2 $3 $4 $5
-                    else
-		        $easysite_modules/EasyApache.sh $2 $3 $4 $5 $6
-	            fi
-                fi
-	    fi
-	fi
-    fi
-    exit 0
-elif [ "$1" == "mysql" ] || [ "$1" == "MySQL" ] || [ "$1" == "Mysql" ] || [ "$1" == "mySQL" ] || [ "$1" == "MYSQL" ]
-then
-    if [ "$2" == "" ] || [ "$2" == " " ]
+            echo -e "${LCYAN}EasySite is currently not installed.${RESET}"
+        fi
+    elif [ "$1" == "init" ]
     then
-        $easysite_modules/EasyMySQL.sh
-    else
-        if [ "$3" == "" ] || [ "$3" == " " ]
-	then
-            $easysite_modules/EasyMySQL.sh $2
+        echo -e "${LMAGENTA}Initialization of EasySite environment variables..${RESET}"
+        . /etc/EasySite/EasySite_env
+        echo -e "${LGREEN}EasySite environment variables initialized.${RESET}"
+    elif [ "$1" == "apache" ]
+    then
+        if [ "$2" == "" ] || [ "$2" == " " ]
+        then
+            $easysite_modules/EasyApache.sh
         else
-            if [ "$4" == "" ] || [ "$4" == " " ]
+            if [ "$3" == "" ] || [ "$3" == " " ]
 	    then
-                $easysite_modules/EasyMySQL.sh $2 $3
+                $easysite_modules/EasyApache.sh $2
             else
-	        if [ "$5" == "" ] || [ "$5" == " " ]
+                if [ "$4" == "" ] || [ "$4" == " " ]
 	        then
-                    $easysite_modules/EasyMySQL.sh $2 $3 $4
+                    $easysite_modules/EasyApache.sh $2 $3
                 else
-	            if [ "$6" == "" ] || [ "$6" == " " ]
+	            if [ "$5" == "" ] || [ "$5" == " " ]
 	            then
-                        $easysite_modules/EasyMySQL.sh $2 $3 $4 $5
+                        $easysite_modules/EasyApache.sh $2 $3 $4
                     else
-		        $easysite_modules/EasyMySQL.sh $2 $3 $4 $5 $6
-	            fi
-                fi
+	                if [ "$6" == "" ] || [ "$6" == " " ]
+	                then
+                            $easysite_modules/EasyApache.sh $2 $3 $4 $5
+                        else
+		            $easysite_modules/EasyApache.sh $2 $3 $4 $5 $6
+	                fi
+                    fi
+	        fi
 	    fi
-	fi
+        fi
+    elif [ "$1" == "mysql" ]
+    then
+        if [ "$2" == "" ] || [ "$2" == " " ]
+        then
+            $easysite_modules/EasyMySQL.sh
+        else
+            if [ "$3" == "" ] || [ "$3" == " " ]
+	    then
+                $easysite_modules/EasyMySQL.sh $2
+            else
+                if [ "$4" == "" ] || [ "$4" == " " ]
+	        then
+                    $easysite_modules/EasyMySQL.sh $2 $3
+                else
+	            if [ "$5" == "" ] || [ "$5" == " " ]
+	            then
+                        $easysite_modules/EasyMySQL.sh $2 $3 $4
+                    else
+	                if [ "$6" == "" ] || [ "$6" == " " ]
+	                then
+                            $easysite_modules/EasyMySQL.sh $2 $3 $4 $5
+                        else
+		            $easysite_modules/EasyMySQL.sh $2 $3 $4 $5 $6
+	                fi
+                    fi
+	        fi
+	    fi
+        fi
+    elif [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--h" ] || [ "$1" == "--help" ]
+    then
+        echo ""
+        echo -e "${LCYAN}Usage: ${MAGENTA}EasySite [${BLUE}options${MAGENTA}]${RESET}"
+        echo ""
+        echo -e "${LCYAN}Options:${RESET}"
+        echo -e "${BLUE}help      ${YELLOW}Display commands${RESET}"
+        echo -e "${BLUE}version   ${YELLOW}Show current Version${RESET}"
+        echo -e "${BLUE}apache    ${YELLOW}Start Apache2 module${RESET}"
+        echo -e "${BLUE}mysql     ${YELLOW}Start MySQL module${RESET}"
+        echo -e "${BLUE}remove    ${YELLOW}Uninstall EasySite${RESET}"
+	echo -e "${BLUE}init    ${YELLOW}Initialize environment variables${RESET}"
+        echo ""
+    elif [ "$1" == "version" ] || [ "$1" == "-v" ] || [ "$1" == "--v" ] || [ "$1" == "--version" ]
+    then
+        echo -e "${LCYAN}EasySite ${LBLUE}V$easysite_version${RESET}"
+    elif [ "$1" == "version-raw" ]
+    then
+        echo "$easysite_version"
+    else
+        echo -e "${RED}Unknown argument: ${LRED}Do ${MAGENTA}EasySite help ${LRED}for more informations.${RESET}"
     fi
     exit 0
-elif [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--h" ] || [ "$1" == "--help" ]
-then
-    echo ""
-    echo -e "${LCYAN}Usage: ${MAGENTA}EasySite [${BLUE}options${MAGENTA}]${RESET}"
-    echo ""
-    echo -e "${LCYAN}Options:${RESET}"
-    echo -e "${BLUE}help      ${YELLOW}Display commands${RESET}"
-    echo -e "${BLUE}version   ${YELLOW}Show current Version${RESET}"
-    echo -e "${BLUE}apache    ${YELLOW}Start Apache2 module${RESET}"
-    echo -e "${BLUE}mysql     ${YELLOW}Start MySQL module${RESET}"
-    echo -e "${BLUE}remove    ${YELLOW}Uninstall EasySite${RESET}"
-    echo ""
-    exit 0
-elif [ "$1" == "version" ] || [ "$1" == "-v" ] || [ "$1" == "--v" ] || [ "$1" == "--version" ]
-then
-    echo -e "${LCYAN}EasySite ${LBLUE}V$easysite_version${RESET}"
-    exit 0
-elif [ "$1" == "version-raw" ]
-then
-    echo "$easysite_version"
-    exit 0
-else
-    echo -e "${RED}Unknown argument: ${LRED}Do ${MAGENTA}EasySite help ${LRED}for more informations.${RESET}"
-    exit 1
 fi
-
 ### GLOBAL ###
 . "$easysite_conf" >/dev/null 2>&1
 
