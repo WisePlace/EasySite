@@ -32,16 +32,17 @@ easyapache_check(){
 	            sources_lines=$(wc -l < "/etc/apt/sources.list")
 	            if [ "$sources_lines" == "1" ]
                 then
-	                echo -e "${RED}Failed to install Apache2: ${LRED}Your debian sources seems wrong.${RESET}"
+	                echo -e "${RED}Failed to install Apache2: ${LRED}Your Linux sources seem wrong.${RESET}"
 	                read -p "$(echo -e "${BLUE}Do you want to repear them using WisePlace tools ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" choice
 	                if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
 	                then
-	                    echo -e "${LYELLOW}Getting linux sources tool..${RESET}"
+	                    echo -e "${LYELLOW}Getting Linux sources tool..${RESET}"
 	                    wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1
 	                    chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
 	                    . /etc/apt/linux_sources.sh
 	                    . EasySite.sh
 	                else
+		            echo -e "${LMAGENTA}Exiting.${RESET}"
 	                    exit 1
 	                fi
 	            else
