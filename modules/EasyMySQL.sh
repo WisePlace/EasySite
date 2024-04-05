@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easymysql_version=1.4
+easymysql_version=1.5
 easymysql_author="WisePlace"
 
 . /etc/EasySite/EasySite_env
