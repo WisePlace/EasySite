@@ -18,7 +18,6 @@ easysite_env="$easysite_etc/EasySite_env"
 main_source="https://raw.githubusercontent.com/WisePlace/EasySite/main"
 
 IP=$(hostname -I)
-local_mysql="None"
 
 #### COLORS ####
 RED="\e[31m"
