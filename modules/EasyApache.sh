@@ -199,11 +199,11 @@ easyapache_site_SSL_enable(){
 	echo -e "${LMAGENTA}Installing required packages..${RESET}"
         sudo apt install certbot python3-certbot-apache -y >/dev/null 2>&1
 	sudo certbot --apache
+        read -s -p "Press enter to continue."
  	clear
         echo " "
 	bin="true"
         easyapache_site_SSLEngine="on"
-	echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
     elif [ "$2" == "2" ]
     then
         sudo a2enmod ssl >/dev/null 2>&1
