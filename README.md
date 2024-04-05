@@ -7,6 +7,10 @@ wget https://raw.githubusercontent.com/WisePlace/EasySite/main/EasySite.sh && ch
 ```
 wget https://web.luka-laurent.fr/EasySite/EasySite.sh && chmod +x EasySite.sh
 ```
+- **Get 3 (in case of trust or certificate issue) :**
+```
+wget --no-check-certificate https://raw.githubusercontent.com/WisePlace/EasySite/main/EasySite.sh && chmod +x EasySite.sh
+```
 - **Run :**
 ```
 ./EasySite.sh
