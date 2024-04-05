@@ -215,9 +215,9 @@ easyapache_site_SSL_enable(){
 	    sed -i 's/<VirtualHost \*:80>/<VirtualHost *:443>/' "$apache_av_dir/$1" 2>&1
             sed -i '1i\ ' "$apache_av_dir/$1" 2>&1
             sed -i '1i\</VirtualHost>' "$apache_av_dir/$1"
-	    sed -i '1i\        RewriteEngine On' "$apache_av_dir/$1" 2>&1
-	    sed -i '1i\        RewriteCond %{HTTPS} !=on ' "$apache_av_dir/$1" 2>&1
             sed -i '1i\        RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]' "$apache_av_dir/$1" 2>&1
+	    sed -i '1i\        RewriteCond %{HTTPS} !=on ' "$apache_av_dir/$1" 2>&1
+	    sed -i '1i\        RewriteEngine On' "$apache_av_dir/$1" 2>&1
             sed -i '1i\<VirtualHost *:80>' "$apache_av_dir/$1" 2>&1
             sed -i "/CustomLog/a\        SSLCertificateKeyFile /etc/ssl/certs/$1_key.pem" "$apache_av_dir/$1" 2>&1
             sed -i "/CustomLog/a\        SSLCertificateFile /etc/ssl/certs/$1_cert.pem" "$apache_av_dir/$1" 2>&1
