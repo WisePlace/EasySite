@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easyapache_version=1.03
+easyapache_version=1.1
 easyapache_author="WisePlace"
 
 . /etc/EasySite/EasySite_env
