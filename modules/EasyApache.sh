@@ -207,6 +207,7 @@ easyapache_site_SSL_enable(){
     elif [ "$2" == "2" ]
     then
         sudo a2enmod ssl >/dev/null 2>&1
+	sudo a2enmod rewrite >/dev/null 2>&1
 	echo -e "${LMAGENTA}Installing required packages..${RESET}"
 	sudo apt install openssl >/dev/null 2>&1
         if output=$(openssl req -x509 -newkey rsa:2048 -keyout /etc/ssl/certs/$1_key.pem -out /etc/ssl/certs/$1_cert.pem -days 365)
