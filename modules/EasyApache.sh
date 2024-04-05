@@ -111,7 +111,7 @@ easyapache_site_status_switch(){
 }
 
 easyapache_site_create(){
-    easyapache_site_name="${easyapache_site_file%.conf}"
+    easyapache_site_name="${1%.conf}"
     if [ -f "$apache_av_dir/$1" ]
     then
         echo -e "${BOLD}> ${LRED}The site ${LYELLOW}$1 ${LRED}already exists.${RESET}"
@@ -127,17 +127,17 @@ easyapache_site_create(){
         echo '        ErrorLog ${APACHE_LOG_DIR}/html_error.log' >> "$apache_av_dir/$1"
         echo '        CustomLog ${APACHE_LOG_DIR}/html_access.log combined' >> "$apache_av_dir/$1"
         echo "</VirtualHost>" >> "$apache_av_dir/$1"
-        if [ ! -d "$easyapache_site_DocumentRoot" ]
+        if [ ! -d "$2" ]
         then
-            sudo mkdir "$easyapache_site_DocumentRoot" >/dev/null 2>&1
+            sudo mkdir "$2" >/dev/null 2>&1
         fi
         echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been created.${RESET}"
     fi
 }
 
 easyapache_site_delete(){
-    easyapache_site_name="${easyapache_site_file%.conf}"
-    easyapache_site_DocumentRoot=$(grep 'DocumentRoot' "$apache_av_dir/$easyapache_site_file" 2>/dev/null | awk '{print $2}')
+    easyapache_site_name="${1%.conf}"
+    easyapache_site_DocumentRoot=$(grep 'DocumentRoot' "$apache_av_dir/$1" 2>/dev/null | awk '{print $2}')
     if [ -f "$apache_av_dir/$1" ]
     then
         a2dissite "$1" >/dev/null 2>&1
@@ -150,7 +150,8 @@ easyapache_site_delete(){
 }
 
 easyapache_site_get(){
-    easyapache_site_name="${easyapache_site_file%.conf}"
+    easyapache_site_name="${1%.conf}"
+    easyapache_site_file="$1"
     easyapache_site_path="$apache_av_dir/$1"
     easyapache_site_DocumentRoot=$(grep 'DocumentRoot' "$easyapache_site_path" 2>/dev/null | awk '{print $2}')
     easyapache_site_ServerName=$(grep 'ServerName' "$easyapache_site_path" 2>/dev/null | awk '{print $2}')
@@ -264,20 +265,20 @@ easyapache_site_SSL_disable(){
 }
 
 easyapache_site_modify_file(){
-    if sudo mv "$apache_av_dir/$easyapache_site_file" "$apache_av_dir/$1" >/dev/null 2>&1
+    if sudo mv "$apache_av_dir/$1" "$apache_av_dir/$2" >/dev/null 2>&1
     then
-        easyapache_site_file="$1"
+        easyapache_site_file="$2"
         sudo systemctl reload apache2 >/dev/null 2>&1
-        easyapache_menu_modify "$easyapache_site_file"
+        easyapache_menu_modify "$1"
     else
         echo -e "${BOLD}> ${LRED}An error occured while renaming the configuration file.${RESET}"
     fi
 }
 
 easyapache_site_modify_DocumentRoot(){
-    if output=$(sed -i "s#^\(\s*\)DocumentRoot\s\+.*#\1DocumentRoot $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\(\s*\)DocumentRoot\s\+.*#\1DocumentRoot $2#" "$apache_av_dir/$1" 2>&1)
     then
-        easyapache_site_DocumentRoot="$1"
+        easyapache_site_DocumentRoot="$2"
         echo -e "${BOLD}> ${LGREEN}The Files Directory has been modified successfully.${RESET}"
         sudo systemctl reload apache2 >/dev/null 2>&1
     else
@@ -286,9 +287,9 @@ easyapache_site_modify_DocumentRoot(){
 }
 
 easyapache_site_modify_ServerName(){
-    if output=$(sed -i "s#^\(\s*\)ServerName\s\+.*#\1ServerName $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\(\s*\)ServerName\s\+.*#\1ServerName $2#" "$apache_av_dir/$1" 2>&1)
     then
-        easyapache_site_ServerName="$1"
+        easyapache_site_ServerName="$2"
         echo -e "${BOLD}> ${LGREEN}The URL has been modified successfully.${RESET}"
         sudo systemctl reload apache2 >/dev/null 2>&1
     else
@@ -297,15 +298,15 @@ easyapache_site_modify_ServerName(){
 }
 
 easyapache_site_modify_Alias(){
-    if [ -z "$easyapache_site_Alias" ]
+    if [ -z "$4" ]
     then
-        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ] || [ "$1" == "/n" ] || [ "$1" == "/N" ]
+        if [ "$2" == "n" ] || [ "$2" == "N" ] || [ "$2" == "/" ] || [ "$2" == "/ " ] || [ "$2" == "/n" ] || [ "$2" == "/N" ]
         then
             echo -e "${BOLD}> ${RED}Failed to modify Alias: ${LRED}The current Alias is already empty.${RESET}"
         else
-            if output=$(sed -i -e "/^\(\s*\)ServerName\s\+.*$/a\\        Alias $1 $easyapache_site_DocumentRoot" "$apache_av_dir/$easyapache_site_file" 2>&1)
+            if output=$(sed -i -e "/^\(\s*\)ServerName\s\+.*$/a\\        Alias $2 $3" "$apache_av_dir/$1" 2>&1)
             then
-                easyapache_site_Alias="$1"
+                easyapache_site_Alias="$2"
                 echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
                 sudo systemctl reload apache2 >/dev/null 2>&1
             else
@@ -313,9 +314,9 @@ easyapache_site_modify_Alias(){
             fi
         fi
     else
-        if [ "$1" == "n" ] || [ "$1" == "N" ] || [ "$1" == "/" ] || [ "$1" == "/ " ] || [ "$1" == "/n" ] || [ "$1" == "/N" ]
+        if [ "$2" == "n" ] || [ "$2" == "N" ] || [ "$2" == "/" ] || [ "$2" == "/ " ] || [ "$2" == "/n" ] || [ "$2" == "/N" ]
         then
-            if output=$(sed -i "\#Alias $easyapache_site_Alias#d" "$apache_av_dir/$easyapache_site_file" 2>&1)
+            if output=$(sed -i "\#Alias $4#d" "$apache_av_dir/$1" 2>&1)
             then
                 easyapache_site_Alias=""
                 easyapache_site_AliasDir=""
@@ -325,9 +326,9 @@ easyapache_site_modify_Alias(){
                 echo -e "${BOLD}> ${RED}Failed to remove Alias: ${LRED}$output${RESET}"
             fi
         else
-            if output=$(sed -i "s#^\(\s*\)Alias\s\+.*#\1Alias $1 $easyapache_site_AliasDir#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+            if output=$(sed -i "s#^\(\s*\)Alias\s\+.*#\1Alias $2 $5#" "$apache_av_dir/$1" 2>&1)
             then
-                easyapache_site_Alias="$1"
+                easyapache_site_Alias="$2"
                 echo -e "${BOLD}> ${LGREEN}The Alias has been modified successfully.${RESET}"
                 sudo systemctl reload apache2 >/dev/null 2>&1
             else
@@ -338,9 +339,9 @@ easyapache_site_modify_Alias(){
 }
 
 easyapache_site_modify_SSLCertificateFile(){
-    if output=$(sed -i "s#^\(\s*\)SSLCertificateFile\s\+.*#\1SSLCertificateFile $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\(\s*\)SSLCertificateFile\s\+.*#\1SSLCertificateFile $2#" "$apache_av_dir/$1" 2>&1)
     then
-        easyapache_site_SSLCertificateFile="$1"
+        easyapache_site_SSLCertificateFile="$2"
         echo -e "${BOLD}> ${LGREEN}The SSL Certificate Path has been modified successfully.${RESET}"
         sudo systemctl reload apache2 >/dev/null 2>&1
     else
@@ -349,9 +350,9 @@ easyapache_site_modify_SSLCertificateFile(){
 }
 
 easyapache_site_modify_SSLCertificateKeyFile(){
-    if output=$(sed -i "s#^\(\s*\)SSLCertificateKeyFile\s\+.*#\1SSLCertificateKeyFile $1#" "$apache_av_dir/$easyapache_site_file" 2>&1)
+    if output=$(sed -i "s#^\(\s*\)SSLCertificateKeyFile\s\+.*#\1SSLCertificateKeyFile $2#" "$apache_av_dir/$1" 2>&1)
     then
-        easyapache_site_SSLCertificateKeyFile="$1"
+        easyapache_site_SSLCertificateKeyFile="$2"
         echo -e "${BOLD}> ${LGREEN}The SSL Key Path has been modified successfully.${RESET}"
         sudo systemctl reload apache2 >/dev/null 2>&1
     else
@@ -570,7 +571,7 @@ easyapache_menu_modify(){
                     fi
                     clear
                     echo " "
-                    easyapache_site_modify_file "$easyapache_site_new_file"
+                    easyapache_site_modify_file "$easyapache_site_file" "$easyapache_site_new_file"
                 fi
                 ;;
             2)
@@ -588,7 +589,7 @@ easyapache_menu_modify(){
                     fi
                     clear
                     echo " "
-                    easyapache_site_modify_DocumentRoot "$easyapache_site_new_DocumentRoot"
+                    easyapache_site_modify_DocumentRoot "$easyapache_site_file" "$easyapache_site_new_DocumentRoot"
                 fi
                 ;;
             3)
@@ -599,7 +600,7 @@ easyapache_menu_modify(){
                 else
                     clear
                     echo " "
-                    easyapache_site_modify_ServerName "$easyapache_site_new_ServerName"
+                    easyapache_site_modify_ServerName "$easyapache_site_file" "$easyapache_site_new_ServerName"
                 fi
                 ;;
             4)
@@ -617,7 +618,7 @@ easyapache_menu_modify(){
                     fi
                     clear
                     echo " "
-                    easyapache_site_modify_Alias "$easyapache_site_new_Alias"
+                    easyapache_site_modify_Alias "$easyapache_site_file" "$easyapache_site_new_Alias" "$easyapache_site_DocumentRoot" "$easyapache_site_Alias" "$easyapache_site_AliasDir"
                 fi
                 ;;
             5)
@@ -657,7 +658,7 @@ easyapache_menu_modify(){
                     else
                         clear
                         echo " "
-                        easyapache_site_modify_SSLCertificateFile "$easyapache_site_new_SSLCertificateFile"
+                        easyapache_site_modify_SSLCertificateFile "$easyapache_site_file" "$easyapache_site_new_SSLCertificateFile"
                     fi
                 else
                     clear
@@ -675,7 +676,7 @@ easyapache_menu_modify(){
                     else
                         clear
                         echo " "
-                        easyapache_site_modify_SSLCertificateKeyFile "$easyapache_site_new_SSLCertificateKeyFile"
+                        easyapache_site_modify_SSLCertificateKeyFile "$easyapache_site_file" "$easyapache_site_new_SSLCertificateKeyFile"
                     fi
                 else
                     easyapache_menu_main
