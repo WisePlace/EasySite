@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easyapache_version=0.96
+easyapache_version=0.97
 easyapache_author="WisePlace"
 
 . /etc/EasySite/EasySite_env
@@ -89,7 +89,7 @@ easyapache_site_status_switch(){
         easyapache_site_status_get "$1"
         if [ "$easyapache_site_status" == "enabled" ]
         then
-            a2dissite "$1" >/dev/null 2>&1
+            sudo a2dissite "$1" >/dev/null 2>&1
             if easysite_service_reload "apache2"
             then
                 echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been disabled.${RESET}"
@@ -97,7 +97,7 @@ easyapache_site_status_switch(){
                 echo -e "${BOLD}> ${RED}Failed to reload apache: ${LRED}$output${RESET}"
             fi
         else
-            a2ensite "$1" >/dev/null 2>&1
+            sudo a2ensite "$1" >/dev/null 2>&1
             if easysite_service_reload "apache2"
             then
                 echo -e "${BOLD}> ${LGREEN}The site ${LYELLOW}$easyapache_site_name ${LGREEN}has been enabled.${RESET}"
@@ -199,19 +199,21 @@ easyapache_site_SSL_enable(){
         echo "Not implemented yet."
     elif [ "$2" == "2" ]
     then
+        sudo a2enmod ssl >/dev/null 2>&1
         openssl req -x509 -newkey rsa:2048 -keyout /etc/ssl/certs/$1_key.pem -out /etc/ssl/certs/$1_cert.pem -days 365
-	sed -i 's/<VirtualHost \*:80>/<VirtualHost *:443>/' "$apache_av_dir/$1"
-        sed -i '1i\ ' "$apache_av_dir/$1"
-        sed -i '1i\<VirtualHost/>' "$apache_av_dir/$1"
-        sed -i "1i\        Redirect permanent / https://$easyapache_site_ServerName/" "$apache_av_dir/$1"
-        sed -i '1i\<VirtualHost *:80>' "$apache_av_dir/$1"
-        sed -i "/CustomLog/a\        SSLCertificateKeyFile /etc/ssl/certs/$1_key.pem" "$apache_av_dir/$1"
-        sed -i "/CustomLog/a\        SSLCertificateFile /etc/ssl/certs/$1_cert.pem" "$apache_av_dir/$1"
-        sed -i "/CustomLog/a\        SSLEngine on" "$apache_av_dir/$1"
-        sed -i "/CustomLog/a\ " "$apache_av_dir/$1"
-	if output=$(systemctl reload apache2 2>&1)
+	sed -i 's/<VirtualHost \*:80>/<VirtualHost *:443>/' "$apache_av_dir/$1" 2>&1
+        sed -i '1i\ ' "$apache_av_dir/$1" 2>&1
+        sed -i '1i\</VirtualHost>' "$apache_av_dir/$1"
+        sed -i "1i\        Redirect permanent / https://$easyapache_site_ServerName/" "$apache_av_dir/$1" 2>&1
+        sed -i '1i\<VirtualHost *:80>' "$apache_av_dir/$1" 2>&1
+        sed -i "/CustomLog/a\        SSLCertificateKeyFile /etc/ssl/certs/$1_key.pem" "$apache_av_dir/$1" 2>&1
+        sed -i "/CustomLog/a\        SSLCertificateFile /etc/ssl/certs/$1_cert.pem" "$apache_av_dir/$1" 2>&1
+        sed -i "/CustomLog/a\        SSLEngine on" "$apache_av_dir/$1" 2>&1
+        sed -i "/CustomLog/a\ " "$apache_av_dir/$1" 2>&1
+	if output=$(sudo systemctl reload apache2 2>&1)
         then
 	    echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
+            bin="true"
         else
 	    echo -e "${BOLD}> ${RED}Failed to enable SSL: ${LRED}$output${RESET}"
         fi
