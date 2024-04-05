@@ -721,30 +721,47 @@ easyapache_menu_modify(){
 #################
 
 ### OPTIONS ###
-if [ "$1" == "" ] || [ "$1" == " " ]
+if [ "$1" != "" ] && [ "$1" != " " ]
 then
-    bin="True"
-elif [ "$1" == "version" ] || [ "$1" == "-v" ] || [ "$1" == "--v" ] || [ "$1" == "--version" ]
-then
-    echo -e "${LCYAN}EasyApache ${LBLUE}V$easyapache_version${RESET}"
+    if [ "$1" == "version" ] || [ "$1" == "-v" ] || [ "$1" == "--v" ] || [ "$1" == "--version" ]
+    then
+        echo -e "${LCYAN}EasyApache ${LBLUE}V$easyapache_version${RESET}"
+    elif [ "$1" == "version-raw" ]
+    then
+        echo "$easyapache_version"
+    elif [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--h" ] || [ "$1" == "--help" ]
+    then
+        echo ""
+        echo -e "${LCYAN}Usage: ${MAGENTA}EasySite apache [${BLUE}options${MAGENTA}]${RESET}"
+        echo ""
+        echo -e "${LCYAN}Options:${RESET}"
+        echo -e "${BLUE}help      ${YELLOW}Display commands${RESET}"
+        echo -e "${BLUE}version   ${YELLOW}Show current Version${RESET}"
+        echo ""
+    else
+        if [ "$2" == "" ] || [ "$2" == " " ]
+        then
+            $1
+        else
+            if [ "$3" == "" ] || [ "$3" == " " ]
+            then
+                $1 $2
+            else
+                if [ "$4" == "" ] || [ "$4" == " " ]
+                then
+                    $1 $2 $3
+                else
+                    if [ "$5" == "" ] || [ "$5" == " " ]
+                    then
+                        $1 $2 $3 $4
+                    else
+                        $1 $2 $3 $4 $5
+                    fi
+                fi
+            fi
+        fi
+    fi
     exit 0
-elif [ "$1" == "version-raw" ]
-then
-    echo "$easyapache_version"
-    exit 0
-elif [ "$1" == "help" ] || [ "$1" == "-h" ] || [ "$1" == "--h" ] || [ "$1" == "--help" ]
-then
-    echo ""
-    echo -e "${LCYAN}Usage: ${MAGENTA}EasySite apache [${BLUE}options${MAGENTA}]${RESET}"
-    echo ""
-    echo -e "${LCYAN}Options:${RESET}"
-    echo -e "${BLUE}help      ${YELLOW}Display commands${RESET}"
-    echo -e "${BLUE}version   ${YELLOW}Show current Version${RESET}"
-    echo ""
-    exit 0
-else
-    echo -e "${RED}Unknown argument: ${LRED}Do ${MAGENTA}EasySite apache help ${LRED}for more informations.${RESET}"
-    exit 1
 fi
 
 ### GLOBAL ###
