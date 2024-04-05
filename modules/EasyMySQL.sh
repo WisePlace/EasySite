@@ -12,6 +12,52 @@ easymysql_author="WisePlace"
 easymysql_token="$easysite_bin/EasyMySQL_token.txt"
 
 ### FUNCTIONS ###
+easymysql_check(){
+    if systemctl status mysql >/dev/null 2>&1
+    then
+        return 0
+    else
+        echo -e "${YELLOW}MariaDB not installed.${RESET}"
+        read -p "$(echo -e "${BLUE}Do you wish to install MariaDB ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" choice
+        if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
+        then
+            echo -e "${LMAGENTA}Installing MariaDB..${RESET}"
+            if output=$(apt install mariadb-server -y >/dev/null 2>&1)
+            then
+                echo -e "${LGREEN}MariaDB successfully installed.${RESET}"
+                systemctl enable mariadb >/dev/null 2>&1
+                systemctl start mariadb >/dev/null 2>&1
+                return 0
+            else
+	            sources_lines=$(wc -l < "/etc/apt/sources.list")
+	            if [ "$sources_lines" == "1" ]
+                then
+	                echo -e "${RED}Failed to install MariaDB: ${LRED}Your Linux sources seem wrong.${RESET}"
+	                read -p "$(echo -e "${BLUE}Do you want to repear them using WisePlace tools ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" choice
+	                if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
+	                then
+	                    echo -e "${LYELLOW}Getting linux sources tool..${RESET}"
+	                    wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1
+	                    chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
+	                    . /etc/apt/linux_sources.sh
+	                    . EasySite.sh
+	                else
+                        echo -e "${LMAGENTA}Exiting.${RESET}"
+	                    exit 1
+	                fi
+	            else
+                    echo -e "${RED}Failed to install MariaDB: ${LRED}$output${RESET}"
+                    echo -e "${LMAGENTA}Exiting.${RESET}"
+                    exit 1
+	            fi
+            fi
+        else
+            echo -e "${LMAGENTA}Exiting.${RESET}"
+            exit 1
+        fi
+    fi
+}
+
 easymysql_connection(){
     if output=$(mysql -h $easymysql_host -u $easymysql_user -p$easymysql_password -e "SELECT 1;" 2>&1)
     then
@@ -405,5 +451,6 @@ else
     exit 1
 fi
 ### GLOBAL ###
+easymysql_check
 easymysql_token_check
 easymysql_session_check
