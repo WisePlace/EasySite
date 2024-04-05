@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easysite_version=0.22
+easysite_version=0.23
 easysite_author="WisePlace"
 
 easysite_etc="/etc/EasySite"
@@ -111,8 +111,25 @@ mysql_check(){
                     systemctl start mariadb >/dev/null 2>&1
                     return
                 else
-                    echo -e "${RED}Failed to install MariaDB: ${LRED}$output${RESET}"
-                    exit 1
+	            sources_lines=$(wc -l < "/etc/apt/sources.list")
+	            if [ "$sources_lines" == "1" ]
+                    then
+	                echo -e "${RED}Failed to install MariaDB: ${LRED}Your debian sources seems wrong.${RESET}"
+	                read -p "$(echo -e "${BLUE}Do you want to repear them using WisePlace tools ? [${GREEN}Y${LBLUE}/${LRED}n${BLUE}]:${RESET} ")" choice
+	                if [ "$choice" == "Y" ] || [ "$choice" == "y" ] || [ "$choice" == "" ]
+	                then
+	                echo -e "${LYELLOW}Getting linux sources tool..${RESET}"
+	                wget --no-check-certificate -qO "/etc/apt/linux_sources.sh" "https://raw.githubusercontent.com/WisePlace/Tools/main/linux_sources.sh" >/dev/null 2>&1
+	                    chmod +x "/etc/apt/linux_sources.sh" >/dev/null 2>&1
+	                    . /etc/apt/linux_sources.sh
+	                    . EasySite.sh
+	                else
+	                    exit 1
+	                fi
+	            else
+                        echo -e "${RED}Failed to install MariaDB: ${LRED}$output${RESET}"
+                        exit 1
+	            fi
                 fi
             else
                 local_mysql="False"
