@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easymysql_version=1.3
+easymysql_version=1.4
 easymysql_author="WisePlace"
 
 . /etc/EasySite/EasySite_env
@@ -27,6 +27,8 @@ easymysql_check(){
                 echo -e "${LGREEN}MariaDB successfully installed.${RESET}"
                 systemctl enable mariadb >/dev/null 2>&1
                 systemctl start mariadb >/dev/null 2>&1
+		echo -e "${LMAGENTA}Starting MariaDB secure installation..${RESET}"
+                mysql_secure_installation
                 return 0
             else
 	            sources_lines=$(wc -l < "/etc/apt/sources.list")
