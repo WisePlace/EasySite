@@ -5,7 +5,7 @@
 ##############
 
 ### VARIABLES ###
-easymysql_version=1.5
+easymysql_version=1.6
 easymysql_author="WisePlace"
 
 . /etc/EasySite/EasySite_env
@@ -210,11 +210,11 @@ easymysql_flush(){
 }
 
 easymysql_token_check(){
-    if easysite_file_check "$easymysql_token"
+    if [ -f "$easymysql_token" ]
     then
         . "$easymysql_token"
     else
-        if easysite_file_create "$easymysql_token"
+        if sudo touch "$easymysql_token" >/dev/null 2>&1
         then
             echo "easymysql_session=" >> $easymysql_token
             echo "easymysql_host=" >> $easymysql_token
