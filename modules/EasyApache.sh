@@ -196,20 +196,18 @@ easyapache_site_SSL_enable(){
     if [ "$2" == "1" ]
     then
         sudo a2enmod ssl >/dev/null 2>&1
+	echo -e "${LMAGENTA}Installing required packages..${RESET}"
         sudo apt install certbot python3-certbot-apache -y >/dev/null 2>&1
-	if output=$(sudo certbot --apache)
-        then
- 	    clear
-            echo " "
-	    bin="true"
-            easyapache_site_SSLEngine="on"
-	    echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
-        else
-	    echo -e "${BOLD}> ${RED}Failed to generate SSL certificate/key: ${LRED}$output${RESET}"
-	fi
+	sudo certbot --apache
+ 	clear
+        echo " "
+	bin="true"
+        easyapache_site_SSLEngine="on"
+	echo -e "${BOLD}> ${LGREEN}SSL has been enabled successfully.${RESET}"
     elif [ "$2" == "2" ]
     then
         sudo a2enmod ssl >/dev/null 2>&1
+	echo -e "${LMAGENTA}Installing required packages..${RESET}"
 	sudo apt install openssl >/dev/null 2>&1
         if output=$(openssl req -x509 -newkey rsa:2048 -keyout /etc/ssl/certs/$1_key.pem -out /etc/ssl/certs/$1_cert.pem -days 365)
         then
